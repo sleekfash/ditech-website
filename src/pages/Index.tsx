@@ -1,12 +1,37 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navigation from "@/components/Navigation";
+import Hero from "@/components/sections/Hero";
+import Services from "@/components/sections/Services";
+import LegalSolutions from "@/components/sections/LegalSolutions";
+import Stats from "@/components/sections/Stats";
+import Projects from "@/components/sections/Projects";
+import TechStack from "@/components/sections/TechStack";
+import InteractiveDemo from "@/components/sections/InteractiveDemo";
+import Testimonials from "@/components/sections/Testimonials";
+import Blog from "@/components/sections/Blog";
+import Contact from "@/components/sections/Contact";
+import Footer from "@/components/sections/Footer";
+import ChatWidget from "@/components/ChatWidget";
 
 const Index = () => {
+  const scrollToContact = () => {
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background dark">
+      <Navigation onContactClick={scrollToContact} />
+      <Hero onContactClick={scrollToContact} />
+      <Services />
+      <LegalSolutions />
+      <Stats />
+      <InteractiveDemo />
+      <Projects />
+      <TechStack />
+      <Testimonials />
+      <Blog />
+      <Contact />
+      <Footer />
+      <ChatWidget />
     </div>
   );
 };
