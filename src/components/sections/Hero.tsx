@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Shield, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import heroBg from "@/assets/hero-bg.jpg";
 
 interface HeroProps {
   onContactClick: () => void;
@@ -10,59 +10,45 @@ interface HeroProps {
 const Hero = ({ onContactClick }: HeroProps) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient mesh */}
-      <div className="absolute inset-0 bg-gradient-mesh opacity-60" />
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroBg})` }}
+      />
+      <div className="absolute inset-0 hero-overlay" />
       
-      {/* Animated background orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-glow" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-pulse-glow delay-1000" />
+      {/* Animated accent orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
       
       <div className="container relative z-10 px-4 py-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-5xl mx-auto text-center"
+          className="max-w-4xl mx-auto text-center"
         >
-          {/* Trust badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="flex flex-wrap justify-center gap-3 mb-8"
-          >
-            <Badge variant="secondary" className="px-4 py-2 text-sm font-medium glass">
-              <Shield className="w-4 h-4 mr-2" />
-              Government-Registered Since 2020
-            </Badge>
-            <Badge variant="secondary" className="px-4 py-2 text-sm font-medium glass">
-              <Clock className="w-4 h-4 mr-2" />
-              12+ Years Cumulative Experience
-            </Badge>
-          </motion.div>
-
           {/* Main headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
             className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
           >
-            Practical AI.{" "}
-            <span className="gradient-text">Reliable Automation.</span>
-            <br />
-            Tangible Results.
+            Transform Your Business with{" "}
+            <span className="gradient-text">AI-Powered</span>
+            {" "}Solutions
           </motion.h1>
 
           {/* Subheadline */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10"
           >
             DiTech Solutions & Services empowers law firms, enterprises, and SMEs with 
-            GPT-5 powered automation, intelligent workflow orchestration, and bespoke 
+            intelligent automation, workflow orchestration, and bespoke 
             full-stack solutions that deliver measurable impact.
           </motion.p>
 
@@ -70,7 +56,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Button
@@ -85,24 +71,24 @@ const Hero = ({ onContactClick }: HeroProps) => {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 border-2"
+              className="text-lg px-8 py-6 border-2 bg-background/80 backdrop-blur-sm"
               onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Explore Services
             </Button>
           </motion.div>
 
-          {/* Client logos or trust indicators */}
+          {/* Client indicators */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
             className="mt-16 pt-8 border-t border-border/50"
           >
             <p className="text-sm text-muted-foreground mb-4">
               Trusted by legal professionals and enterprises
             </p>
-            <div className="flex flex-wrap justify-center gap-8 text-muted-foreground/60">
+            <div className="flex flex-wrap justify-center gap-8 text-muted-foreground">
               <span className="font-display font-semibold text-lg">Law Firms</span>
               <span className="hidden sm:block">•</span>
               <span className="font-display font-semibold text-lg">Senior Advocates</span>
@@ -119,7 +105,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
+        transition={{ delay: 1, duration: 0.6 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
         <motion.div

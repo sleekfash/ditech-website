@@ -13,7 +13,7 @@ const navItems = [
   { label: "Services", href: "#services" },
   { label: "Legal Tech", href: "#legal" },
   { label: "Projects", href: "#projects" },
-  { label: "Demo", href: "#demo" },
+  { label: "Shop", href: "#shop" },
   { label: "Blog", href: "#blog" },
 ];
 
@@ -52,12 +52,9 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             <a href="#" className="flex items-center gap-3">
               <img 
                 src={ditechLogo} 
-                alt="DiTech AI Logo" 
+                alt="DiTech Solutions" 
                 className="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover"
               />
-              <span className="font-display text-xl md:text-2xl font-bold gradient-text">
-                DiTech AI
-              </span>
             </a>
 
             {/* Desktop Navigation */}
