@@ -64,6 +64,7 @@ export default {
         },
         // DiTech custom semantic colors
         glow: "hsl(var(--glow))",
+        steel: "hsl(var(--steel))",
         surface: {
           DEFAULT: "hsl(var(--surface))",
           elevated: "hsl(var(--surface-elevated))",
