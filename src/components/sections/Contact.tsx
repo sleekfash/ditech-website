@@ -39,10 +39,27 @@ const Contact = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    // Simulate form submission
-    console.log("Form submitted:", data);
-    setIsSubmitted(true);
-    toast.success("Message sent! We'll get back to you within 24 hours.");
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/contact-form`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to submit");
+
+      setIsSubmitted(true);
+      toast.success("Message sent! We'll get back to you within 24 hours.");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("Failed to send message. Please try again.");
+    }
   };
 
   if (isSubmitted) {

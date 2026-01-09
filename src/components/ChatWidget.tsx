@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { toast } from "sonner";
 
 interface Message {
-  id: number;
+  id: string;
   role: "user" | "assistant";
   content: string;
 }
 
 const initialMessages: Message[] = [
   {
-    id: 1,
+    id: "initial",
     role: "assistant",
     content: "Hi! I'm DiTech's AI assistant. I can help you learn about our services, answer questions about AI automation, legal tech, or help you get started with a project. How can I assist you today?",
   },
@@ -30,41 +31,121 @@ const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSend = async (messageText?: string) => {
     const text = messageText || input;
-    if (!text.trim()) return;
+    if (!text.trim() || isLoading) return;
 
-    // Add user message
     const userMessage: Message = {
-      id: messages.length + 1,
+      id: `user-${Date.now()}`,
       role: "user",
       content: text,
     };
+    
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsTyping(true);
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses: Record<string, string> = {
-        "Tell me about your services": "We offer AI-powered automation, workflow orchestration with n8n, full-stack development, legal tech solutions, e-commerce integrations, and consulting services. Our specialty is combining GPT-5 intelligence with robust automation pipelines to deliver measurable results.",
-        "What's your legal tech solution?": "Our flagship Legal & Case Automation platform handles case management, AI-powered transcription using Whisper, automated document drafting, and intelligent legal research. It's been deployed in firms handling 5,000+ active cases with 65% reduction in drafting time.",
-        "How does AI automation work?": "We use a hybrid approach: GPT-5 handles intelligent decision-making and content generation, while n8n provides deterministic workflow automation. This combination gives you the best of both worlds—smart AI reasoning with reliable, predictable execution.",
-        "I want to discuss a project": "I'd love to help you get started. For a detailed discussion, I recommend filling out our contact form below. You can share your project requirements, and our team will get back to you within 24 hours with a tailored proposal. Would you like me to take you to the contact section?",
-      };
+    // Build messages for API (exclude initial message id formatting)
+    const apiMessages = [...messages, userMessage].map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
 
-      const response = responses[text] || "That's a great question! For detailed inquiries, I'd recommend reaching out through our contact form. Our team can provide you with specific information about pricing, timelines, and custom solutions. Is there anything else I can help with?";
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ messages: apiMessages.slice(1) }), // Skip initial greeting
+        }
+      );
 
-      const assistantMessage: Message = {
-        id: messages.length + 2,
-        role: "assistant",
-        content: response,
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-      setIsTyping(false);
-    }, 1500);
+      if (!response.ok) {
+        if (response.status === 429) {
+          toast.error("Too many requests. Please wait a moment.");
+          throw new Error("Rate limited");
+        }
+        throw new Error("Failed to get response");
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No reader");
+
+      const decoder = new TextDecoder();
+      let assistantContent = "";
+      const assistantId = `assistant-${Date.now()}`;
+
+      // Add empty assistant message
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: "assistant", content: "" },
+      ]);
+
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // Process line-by-line
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, content: assistantContent } : m
+                )
+              );
+            }
+          } catch {
+            // JSON might be incomplete, continue
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
+      // Add fallback response
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: "I apologize, but I'm having trouble connecting right now. Please try again or use our contact form for assistance.",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -147,7 +228,14 @@ const ChatWidget = () => {
                             : "bg-muted text-foreground"
                         }`}
                       >
-                        {message.content}
+                        {message.content || (
+                          <motion.span
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            Thinking...
+                          </motion.span>
+                        )}
                       </div>
                       {message.role === "user" && (
                         <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
@@ -156,21 +244,7 @@ const ChatWidget = () => {
                       )}
                     </div>
                   ))}
-                  {isTyping && (
-                    <div className="flex gap-2 items-center">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Bot className="w-4 h-4 text-primary" />
-                      </div>
-                      <div className="bg-muted rounded-lg px-4 py-2 text-sm">
-                        <motion.span
-                          animate={{ opacity: [0.4, 1, 0.4] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                          Typing...
-                        </motion.span>
-                      </div>
-                    </div>
-                  )}
+                  <div ref={messagesEndRef} />
                 </div>
 
                 {/* Quick Replies */}
@@ -202,8 +276,14 @@ const ChatWidget = () => {
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="Type a message..."
                       className="flex-1"
+                      disabled={isLoading}
                     />
-                    <Button type="submit" size="icon" className="gradient-bg">
+                    <Button 
+                      type="submit" 
+                      size="icon" 
+                      className="gradient-bg"
+                      disabled={isLoading || !input.trim()}
+                    >
                       <Send className="w-4 h-4" />
                     </Button>
                   </form>

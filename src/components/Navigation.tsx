@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sparkles } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import ditechLogo from "@/assets/ditech-logo.jpeg";
 
 interface NavigationProps {
   onContactClick: () => void;
@@ -47,9 +49,14 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         <div className="container px-4">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2">
+            <a href="#" className="flex items-center gap-3">
+              <img 
+                src={ditechLogo} 
+                alt="DiTech AI Logo" 
+                className="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover"
+              />
               <span className="font-display text-xl md:text-2xl font-bold gradient-text">
-                DiTech
+                DiTech AI
               </span>
             </a>
 
@@ -66,8 +73,9 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
               ))}
             </div>
 
-            {/* CTA Button */}
-            <div className="hidden md:block">
+            {/* CTA Button + Theme Toggle */}
+            <div className="hidden md:flex items-center gap-3">
+              <ThemeToggle />
               <Button
                 onClick={onContactClick}
                 className="gradient-bg text-primary-foreground glow-sm hover:glow transition-all"
@@ -78,18 +86,20 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             </div>
 
             {/* Mobile Menu Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </Button>
+            <div className="flex md:hidden items-center gap-2">
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </motion.nav>
