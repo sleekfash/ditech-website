@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Linkedin, Mail, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +9,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border/50 bg-card/30 backdrop-blur-sm">
+    <footer className="border-t border-border bg-card">
       <div className="container px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -19,21 +18,21 @@ const Footer = () => {
               DiTech Solutions
             </h3>
             <p className="text-muted-foreground mb-4 max-w-md">
-              Practical AI. Reliable Automation. Tangible Results. 
-              Empowering legal professionals and enterprises with cutting-edge technology solutions.
+              Empowering legal professionals and enterprises with cutting-edge AI technology solutions 
+              for automation, workflow orchestration, and digital transformation.
             </p>
             <div className="flex gap-4">
               <a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"
+                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
               <a
                 href="mailto:contact@ditech.solutions"
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"
+                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"
               >
                 <Mail className="w-5 h-5" />
               </a>
@@ -60,8 +59,8 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#demo" className="hover:text-primary transition-colors">
-                  Interactive Demo
+                <a href="#shop" className="hover:text-primary transition-colors">
+                  Shop
                 </a>
               </li>
               <li>
@@ -92,10 +91,9 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground text-center sm:text-left">
             <p>© {currentYear} DiTech Solutions & Services. All rights reserved.</p>
-            <p className="text-xs mt-1">Government-registered tech consultancy since 2020</p>
           </div>
           
           <Button

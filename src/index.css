@@ -2,133 +2,121 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-/* DiTech Solutions Design System
-   Color Palette from brand spec:
-   - #DADADC (Light Gray)
-   - #A5A7AC (Medium Gray)
-   - #0B1015 (Near Black)
-   - #5D6267 (Dark Gray)
-   - #BBBCC1 (Silver)
-   - #A7E0E2 (Teal/Cyan accent)
-   
-   Typography: Inter (body), Poppins (headings), JetBrains Mono (code)
+/* DiTech Solutions - Modern Professional Design System
+   Clean, light aesthetic with teal accents
 */
 
 @layer base {
   :root {
-    /* Light mode - Professional with teal accents */
-    --background: 220 10% 96%; /* #DADADC based */
-    --foreground: 216 33% 6%; /* #0B1015 based */
+    /* Light Mode - Clean, Professional, Modern */
+    --background: 210 25% 98%;
+    --foreground: 220 15% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 216 33% 6%;
+    --card-foreground: 220 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 216 33% 6%;
+    --popover-foreground: 220 15% 20%;
 
-    /* Teal Primary - #A7E0E2 */
-    --primary: 182 52% 77%;
-    --primary-foreground: 216 33% 6%;
+    /* Teal Primary - Professional accent */
+    --primary: 175 50% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Silver Secondary - #BBBCC1 */
-    --secondary: 230 5% 74%;
-    --secondary-foreground: 216 33% 6%;
+    /* Light gray secondary */
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 220 15% 25%;
 
-    /* Medium Gray Muted - #A5A7AC */
-    --muted: 225 4% 66%;
-    --muted-foreground: 220 5% 38%;
+    /* Muted grays */
+    --muted: 210 15% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Darker Teal Accent */
-    --accent: 182 52% 60%;
-    --accent-foreground: 216 33% 6%;
+    /* Accent - Vibrant teal */
+    --accent: 180 55% 48%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 230 5% 80%;
-    --input: 230 5% 80%;
-    --ring: 182 52% 60%;
+    --border: 210 15% 88%;
+    --input: 210 15% 88%;
+    --ring: 175 50% 42%;
 
     --radius: 0.75rem;
 
     /* DiTech Custom Tokens */
-    --gradient-start: 182 52% 77%;
-    --gradient-mid: 195 50% 60%;
-    --gradient-end: 210 60% 50%;
+    --gradient-start: 175 50% 42%;
+    --gradient-mid: 180 55% 48%;
+    --gradient-end: 185 60% 55%;
     
-    --glow: 182 60% 70%;
-    --surface: 220 10% 94%;
+    --glow: 175 55% 50%;
+    --surface: 210 20% 96%;
     --surface-elevated: 0 0% 100%;
+    --steel: 220 10% 40%;
 
-    /* Dark Gray - #5D6267 */
-    --steel: 215 4% 38%;
-
-    --sidebar-background: 220 10% 94%;
-    --sidebar-foreground: 216 33% 6%;
-    --sidebar-primary: 182 52% 60%;
-    --sidebar-primary-foreground: 216 33% 6%;
-    --sidebar-accent: 230 5% 88%;
-    --sidebar-accent-foreground: 216 33% 6%;
-    --sidebar-border: 230 5% 80%;
-    --sidebar-ring: 182 52% 60%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 15% 20%;
+    --sidebar-primary: 175 50% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 94%;
+    --sidebar-accent-foreground: 220 15% 20%;
+    --sidebar-border: 210 15% 88%;
+    --sidebar-ring: 175 50% 42%;
   }
 
   .dark {
-    /* Dark mode - Near Black (#0B1015) with vibrant teal */
-    --background: 216 33% 6%;
-    --foreground: 220 10% 92%;
+    /* Dark Mode - Modern, sleek */
+    --background: 220 20% 12%;
+    --foreground: 210 15% 95%;
 
-    --card: 216 25% 10%;
-    --card-foreground: 220 10% 92%;
+    --card: 220 18% 15%;
+    --card-foreground: 210 15% 95%;
 
-    --popover: 216 25% 10%;
-    --popover-foreground: 220 10% 92%;
+    --popover: 220 18% 15%;
+    --popover-foreground: 210 15% 95%;
 
-    /* Vibrant Teal Primary - #A7E0E2 */
-    --primary: 182 52% 77%;
-    --primary-foreground: 216 33% 6%;
+    /* Vibrant Teal Primary */
+    --primary: 175 55% 50%;
+    --primary-foreground: 220 20% 10%;
 
-    /* Dark Steel Secondary */
-    --secondary: 215 10% 18%;
-    --secondary-foreground: 220 10% 92%;
+    /* Dark secondary */
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 210 15% 90%;
 
-    /* Muted - Dark Gray #5D6267 */
-    --muted: 215 10% 20%;
-    --muted-foreground: 225 4% 66%;
+    /* Muted dark */
+    --muted: 220 15% 22%;
+    --muted-foreground: 210 10% 60%;
 
-    /* Accent - Brighter Teal */
-    --accent: 182 60% 70%;
-    --accent-foreground: 216 33% 6%;
+    /* Accent - Bright teal */
+    --accent: 180 60% 55%;
+    --accent-foreground: 220 20% 10%;
 
-    --destructive: 0 70% 45%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 10% 18%;
-    --input: 215 10% 18%;
-    --ring: 182 52% 77%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 175 55% 50%;
 
     /* DiTech Custom Tokens - Dark */
-    --gradient-start: 182 52% 77%;
-    --gradient-mid: 195 55% 65%;
-    --gradient-end: 220 70% 60%;
+    --gradient-start: 175 55% 50%;
+    --gradient-mid: 180 60% 55%;
+    --gradient-end: 185 65% 60%;
     
-    --glow: 182 60% 75%;
-    --surface: 216 28% 8%;
-    --surface-elevated: 216 25% 12%;
+    --glow: 175 60% 55%;
+    --surface: 220 18% 13%;
+    --surface-elevated: 220 18% 17%;
+    --steel: 210 10% 65%;
 
-    /* Steel color for dark mode */
-    --steel: 225 4% 66%;
-
-    --sidebar-background: 216 28% 8%;
-    --sidebar-foreground: 220 10% 92%;
-    --sidebar-primary: 182 52% 77%;
-    --sidebar-primary-foreground: 216 33% 6%;
-    --sidebar-accent: 215 10% 16%;
-    --sidebar-accent-foreground: 220 10% 92%;
-    --sidebar-border: 215 10% 18%;
-    --sidebar-ring: 182 52% 77%;
+    --sidebar-background: 220 20% 12%;
+    --sidebar-foreground: 210 15% 95%;
+    --sidebar-primary: 175 55% 50%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 15% 20%;
+    --sidebar-accent-foreground: 210 15% 90%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 175 55% 50%;
   }
 }
 
@@ -147,11 +135,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
-  }
-
-  code, pre {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Space Grotesk', sans-serif;
   }
 }
 
@@ -187,15 +171,19 @@
 
   .glass {
     @apply backdrop-blur-xl;
-    background: hsl(var(--card) / 0.7);
+    background: hsl(var(--card) / 0.85);
     border: 1px solid hsl(var(--border) / 0.5);
   }
 
   .glow {
-    box-shadow: 0 0 40px hsl(var(--glow) / 0.3);
+    box-shadow: 0 0 40px hsl(var(--glow) / 0.25);
   }
 
   .glow-sm {
-    box-shadow: 0 0 20px hsl(var(--glow) / 0.2);
+    box-shadow: 0 0 20px hsl(var(--glow) / 0.15);
+  }
+  
+  .hero-overlay {
+    background: linear-gradient(135deg, hsl(var(--background) / 0.9) 0%, hsl(var(--background) / 0.7) 100%);
   }
 }
