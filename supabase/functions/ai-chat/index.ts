@@ -1,9 +1,55 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Message validation schema
+const MessageSchema = z.object({
+  role: z.enum(["user", "assistant", "system"]),
+  content: z.string().max(10000, "Message content too long"),
+});
+
+const RequestSchema = z.object({
+  messages: z.array(MessageSchema)
+    .min(1, "At least one message is required")
+    .max(50, "Too many messages in conversation"),
+});
+
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 15; // Max 15 AI requests per minute per IP
+
+// deno-lint-ignore no-explicit-any
+async function checkRateLimit(supabase: any, ip: string): Promise<boolean> {
+  const now = new Date();
+  const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS);
+
+  const { count, error } = await supabase
+    .from("rate_limits")
+    .select("*", { count: "exact", head: true })
+    .eq("identifier", ip)
+    .eq("endpoint", "ai-chat")
+    .gte("created_at", windowStart.toISOString());
+
+  if (error) {
+    console.error("Rate limit check error:", error.code);
+    return true; // Allow on error
+  }
+
+  return (count ?? 0) < RATE_LIMIT_MAX_REQUESTS;
+}
+
+// deno-lint-ignore no-explicit-any
+async function recordRequest(supabase: any, ip: string): Promise<void> {
+  await supabase.from("rate_limits").insert({
+    identifier: ip,
+    endpoint: "ai-chat",
+  });
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,12 +57,51 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    // Create Supabase client for rate limiting
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Get client IP
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+               req.headers.get("x-real-ip") || 
+               "unknown";
+
+    // Check rate limit
+    const isAllowed = await checkRateLimit(supabase, ip);
+    if (!isAllowed) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please wait before trying again." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Parse and validate request
+    const rawData = await req.json();
+    
+    let validatedData;
+    try {
+      validatedData = RequestSchema.parse(rawData);
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        return new Response(
+          JSON.stringify({ error: "Invalid request format" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw validationError;
+    }
+
+    const { messages } = validatedData;
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
+
+    // Record this request for rate limiting
+    await recordRequest(supabase, ip);
 
     const systemPrompt = `You are DiTech AI, a helpful sales assistant for DiTech Solutions & Services - a government-registered tech consultancy since 2020 with 12+ years of cumulative industry experience.
 
@@ -78,8 +163,7 @@ CONVERSATION GUIDELINES:
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+      console.error("AI gateway error:", response.status);
       return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -90,8 +174,8 @@ CONVERSATION GUIDELINES:
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
-    console.error("chat error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    console.error("Chat error occurred");
+    return new Response(JSON.stringify({ error: "An error occurred. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
