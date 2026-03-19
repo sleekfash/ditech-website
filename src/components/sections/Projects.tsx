@@ -3,6 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Scale, Cloud, Bot, ShoppingCart, ArrowUpRight } from "lucide-react";
 
+import projectLegalCase from "@/assets/project-legal-case.jpg";
+import projectCloudArchive from "@/assets/project-cloud-archive.jpg";
+import projectAutomation from "@/assets/project-automation.jpg";
+import projectRetail from "@/assets/project-retail.jpg";
+
 const projects = [
   {
     icon: Scale,
@@ -14,6 +19,7 @@ const projects = [
     techStack: ["React", "Node.js", "PostgreSQL", "Whisper AI", "GPT-5", "n8n"],
     impact: ["65% faster drafting", "Zero missed deadlines", "40% efficiency gain"],
     featured: true,
+    image: projectLegalCase,
   },
   {
     icon: Cloud,
@@ -25,6 +31,7 @@ const projects = [
     techStack: ["AWS Lambda", "Elasticsearch", "Vector DB", "Python", "React"],
     impact: ["10x faster retrieval", "99.9% uptime", "50% storage cost reduction"],
     featured: false,
+    image: projectCloudArchive,
   },
   {
     icon: Bot,
@@ -36,6 +43,7 @@ const projects = [
     techStack: ["n8n", "GPT-5", "Webhooks", "REST APIs", "MongoDB"],
     impact: ["80% automation rate", "90% fewer errors", "24/7 operation"],
     featured: false,
+    image: projectAutomation,
   },
   {
     icon: ShoppingCart,
@@ -47,6 +55,7 @@ const projects = [
     techStack: ["Shopify", "React Native", "Raspberry Pi", "Node.js", "PostgreSQL"],
     impact: ["Real-time inventory", "15 locations deployed", "Single source of truth"],
     featured: false,
+    image: projectRetail,
   },
 ];
 
@@ -79,7 +88,18 @@ const Projects = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={project.featured ? "lg:col-span-2" : ""}
             >
-              <Card className={`h-full group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm ${project.featured ? 'gradient-border' : ''}`}>
+              <Card className={`h-full group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm overflow-hidden ${project.featured ? 'gradient-border' : ''}`}>
+                {/* Project image */}
+                <div className={`relative overflow-hidden ${project.featured ? 'aspect-[3/1]' : 'aspect-[16/9]'}`}>
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-60" />
+                </div>
+
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">

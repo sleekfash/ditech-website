@@ -3,7 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 
-// Static blog posts for now - will be dynamic with CMS later
+import blogAiLegal from "@/assets/blog-ai-legal.jpg";
+import blogWorkflow from "@/assets/blog-workflow.jpg";
+import blogLegalTech from "@/assets/blog-legal-tech.jpg";
+import blogTranscription from "@/assets/blog-transcription.jpg";
+
 const blogPosts = [
   {
     id: 1,
@@ -13,6 +17,7 @@ const blogPosts = [
     readTime: "5 min read",
     date: "Jan 5, 2024",
     featured: true,
+    image: blogAiLegal,
   },
   {
     id: 2,
@@ -22,6 +27,7 @@ const blogPosts = [
     readTime: "8 min read",
     date: "Dec 28, 2023",
     featured: false,
+    image: blogWorkflow,
   },
   {
     id: 3,
@@ -31,6 +37,7 @@ const blogPosts = [
     readTime: "6 min read",
     date: "Dec 15, 2023",
     featured: false,
+    image: blogLegalTech,
   },
   {
     id: 4,
@@ -40,6 +47,7 @@ const blogPosts = [
     readTime: "4 min read",
     date: "Dec 10, 2023",
     featured: false,
+    image: blogTranscription,
   },
 ];
 
@@ -79,18 +87,29 @@ const Blog = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={post.featured ? "md:col-span-2 lg:col-span-2" : ""}
             >
-              <Card className="h-full group cursor-pointer hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
+              <Card className="h-full group cursor-pointer hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm overflow-hidden">
+                {/* Featured image */}
+                <div className={`relative overflow-hidden ${post.featured ? 'aspect-[2/1]' : 'aspect-[4/3]'}`}>
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+                  <div className="absolute bottom-3 left-3 flex items-center gap-2">
                     <Badge className={categoryColors[post.category] || "bg-muted"}>
                       {post.category}
                     </Badge>
                     {post.featured && (
-                      <Badge variant="outline" className="border-primary text-primary">
+                      <Badge variant="outline" className="border-primary text-primary bg-background/60 backdrop-blur-sm">
                         Featured
                       </Badge>
                     )}
                   </div>
+                </div>
+
+                <CardHeader className="pt-4">
                   <CardTitle className="font-display text-lg group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </CardTitle>
