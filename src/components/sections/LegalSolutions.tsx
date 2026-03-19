@@ -8,10 +8,12 @@ import {
   Shield,
   Clock,
   BarChart3,
-  CheckCircle2
+  CheckCircle2,
+  Scale
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import legalSolutionsHero from "@/assets/legal-solutions-hero.jpg";
 
 const legalFeatures = [
   {
@@ -66,13 +68,13 @@ const LegalSolutions = () => {
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
       
       <div className="container relative z-10 px-4">
-        {/* Header */}
+        {/* Header with hero image */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <Badge variant="secondary" className="mb-4 px-4 py-2">
             <Scale className="w-4 h-4 mr-2" />
@@ -88,6 +90,23 @@ const LegalSolutions = () => {
           </p>
         </motion.div>
 
+        {/* Hero image */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="relative rounded-2xl overflow-hidden mb-16 max-w-5xl mx-auto"
+        >
+          <img
+            src={legalSolutionsHero}
+            alt="AI-powered legal technology platform"
+            className="w-full h-64 sm:h-80 md:h-96 object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+        </motion.div>
+
         {/* Metrics */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -96,7 +115,7 @@ const LegalSolutions = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
         >
-          {metrics.map((metric, index) => (
+          {metrics.map((metric) => (
             <Card key={metric.label} className="text-center p-6 glass border-primary/20">
               <metric.icon className="w-8 h-8 mx-auto mb-3 text-primary" />
               <div className="font-display text-3xl md:text-4xl font-bold gradient-text mb-2">
@@ -168,8 +187,5 @@ const LegalSolutions = () => {
     </section>
   );
 };
-
-// Need to import Scale icon
-import { Scale } from "lucide-react";
 
 export default LegalSolutions;
