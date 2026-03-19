@@ -8,12 +8,20 @@ import {
   Award, 
   Lightbulb,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  Linkedin,
+  Mail
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/layout/Layout";
-import aboutOffice from "@/assets/about-office.jpg";
+
+import aboutTeamWorkspace from "@/assets/about-team-workspace.jpg";
+import aboutStrategy from "@/assets/about-strategy.jpg";
+import teamCeo from "@/assets/team-ceo.jpg";
+import teamLeadDev from "@/assets/team-lead-dev.jpg";
+import teamAiLead from "@/assets/team-ai-lead.jpg";
+import teamDesignLead from "@/assets/team-design-lead.jpg";
 
 const values = [
   {
@@ -35,6 +43,33 @@ const values = [
     icon: Users,
     title: "Collaboration",
     description: "We believe in the power of teamwork, both within our team and in partnership with our clients.",
+  },
+];
+
+const teamMembers = [
+  {
+    name: "Arjun Mehta",
+    role: "Founder & CEO",
+    bio: "Visionary technologist with 12+ years in enterprise software and AI. Passionate about making cutting-edge tech accessible to businesses of all sizes.",
+    image: teamCeo,
+  },
+  {
+    name: "Priya Sharma",
+    role: "Lead Developer",
+    bio: "Full-stack engineer specializing in React, Node.js, and cloud architecture. Leads our development team with a focus on scalable, maintainable code.",
+    image: teamLeadDev,
+  },
+  {
+    name: "Rahul Krishnan",
+    role: "AI & Data Lead",
+    bio: "Machine learning specialist with expertise in NLP, RAG pipelines, and GPT integrations. Architects our AI-powered automation solutions.",
+    image: teamAiLead,
+  },
+  {
+    name: "Ananya Reddy",
+    role: "UX & Project Lead",
+    bio: "Design-driven project manager ensuring every solution is user-centric. Bridges the gap between technical capability and business needs.",
+    image: teamDesignLead,
   },
 ];
 
@@ -83,17 +118,66 @@ const About = () => {
               className="relative"
             >
               <img
-                src={aboutOffice}
-                alt="DiTech Office"
-                className="rounded-2xl shadow-2xl"
+                src={aboutTeamWorkspace}
+                alt="DiTech team collaborating in modern office"
+                className="rounded-2xl shadow-2xl w-full object-cover"
+                loading="lazy"
               />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
+      {/* Our Story with image */}
       <section className="section-padding">
+        <div className="container-custom">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <img
+                src={aboutStrategy}
+                alt="DiTech strategy and planning session"
+                className="rounded-2xl shadow-lg w-full object-cover"
+                loading="lazy"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Our <span className="gradient-text">Story</span>
+              </h2>
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  Founded in 2020, DiTech Solutions & Services began with a simple belief: that every business, 
+                  regardless of size, deserves access to powerful, intelligent technology solutions.
+                </p>
+                <p>
+                  What started as a small consultancy serving local law firms quickly evolved into a full-service 
+                  technology partner. Our breakthrough came when we built a comprehensive case management system 
+                  that transformed how a major law firm handled over 5,000 active cases—reducing drafting time 
+                  by 65% and eliminating missed deadlines entirely.
+                </p>
+                <p>
+                  Today, we serve clients across legal, retail, and enterprise sectors, combining AI, workflow 
+                  automation, and custom development to create solutions that deliver measurable impact. Our 
+                  government-registered company is built on transparency, expertise, and a relentless focus 
+                  on client success.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="section-padding bg-muted/30">
         <div className="container-custom">
           <div className="grid md:grid-cols-2 gap-8">
             <motion.div
@@ -132,6 +216,70 @@ const About = () => {
                 </CardContent>
               </Card>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet the Team */}
+      <section className="section-padding">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-3xl mx-auto mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Meet Our <span className="gradient-text">Team</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              The talented people behind DiTech's innovative solutions
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {teamMembers.map((member, index) => (
+              <motion.div
+                key={member.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="h-full group hover:shadow-xl transition-all duration-300 border-border hover:border-primary/30 bg-card overflow-hidden">
+                  {/* Photo */}
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
+                  </div>
+
+                  <CardContent className="p-5 -mt-8 relative z-10">
+                    <h3 className="text-lg font-bold text-foreground mb-1">
+                      {member.name}
+                    </h3>
+                    <p className="text-sm font-medium text-primary mb-3">
+                      {member.role}
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {member.bio}
+                    </p>
+                    <div className="flex gap-3 mt-4">
+                      <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                        <Linkedin className="w-4 h-4" />
+                      </a>
+                      <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                        <Mail className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
