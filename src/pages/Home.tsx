@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/layout/Layout";
 import heroBg from "@/assets/hero-bg.jpg";
+import homeCollaboration from "@/assets/home-collaboration.jpg";
+import homeAiTech from "@/assets/home-ai-tech.jpg";
 
 const services = [
   {
@@ -209,7 +211,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Why Choose Us - with image */}
       <section className="section-padding">
         <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -253,27 +255,64 @@ const Home = () => {
               viewport={{ once: true }}
               className="relative"
             >
+              <img
+                src={homeCollaboration}
+                alt="Team collaborating on AI-powered business solutions"
+                className="rounded-2xl shadow-2xl w-full object-cover"
+                loading="lazy"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Technology Showcase */}
+      <section className="section-padding gradient-bg-subtle">
+        <div className="container-custom">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="order-2 lg:order-1"
+            >
+              <img
+                src={homeAiTech}
+                alt="AI technology and intelligent automation interfaces"
+                className="rounded-2xl shadow-2xl w-full object-cover"
+                loading="lazy"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="order-1 lg:order-2"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Powered by <span className="gradient-text">Cutting-Edge AI</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                Our solutions leverage the latest in artificial intelligence, from natural language processing to computer vision, delivering automation that truly understands your business context.
+              </p>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <Card className="p-6 bg-primary/5 border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-1">100%</div>
-                    <div className="text-sm text-muted-foreground">Project Success Rate</div>
-                  </Card>
-                  <Card className="p-6 bg-accent/5 border-accent/20">
-                    <div className="text-3xl font-bold text-accent mb-1">5+</div>
-                    <div className="text-sm text-muted-foreground">Years Experience</div>
-                  </Card>
-                </div>
-                <div className="space-y-4 pt-8">
-                  <Card className="p-6 bg-secondary/5 border-secondary/20">
-                    <div className="text-3xl font-bold text-secondary mb-1">10+</div>
-                    <div className="text-sm text-muted-foreground">Industries Served</div>
-                  </Card>
-                  <Card className="p-6 bg-primary/5 border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-1">24/7</div>
-                    <div className="text-sm text-muted-foreground">Customer Support</div>
-                  </Card>
-                </div>
+                <Card className="p-4 bg-card border-border">
+                  <div className="text-2xl font-bold text-primary mb-1">GPT-5</div>
+                  <div className="text-sm text-muted-foreground">Language Models</div>
+                </Card>
+                <Card className="p-4 bg-card border-border">
+                  <div className="text-2xl font-bold text-primary mb-1">RAG</div>
+                  <div className="text-sm text-muted-foreground">Knowledge Retrieval</div>
+                </Card>
+                <Card className="p-4 bg-card border-border">
+                  <div className="text-2xl font-bold text-primary mb-1">n8n</div>
+                  <div className="text-sm text-muted-foreground">Workflow Engine</div>
+                </Card>
+                <Card className="p-4 bg-card border-border">
+                  <div className="text-2xl font-bold text-primary mb-1">500+</div>
+                  <div className="text-sm text-muted-foreground">Integrations</div>
+                </Card>
               </div>
             </motion.div>
           </div>
@@ -281,7 +320,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="section-padding gradient-bg-subtle">
+      <section className="section-padding">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

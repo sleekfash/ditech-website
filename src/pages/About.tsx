@@ -9,19 +9,13 @@ import {
   Lightbulb,
   ArrowRight,
   CheckCircle,
-  Linkedin,
-  Mail
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/layout/Layout";
 
-import aboutTeamWorkspace from "@/assets/about-team-workspace.jpg";
+import aboutWorkspaceTech from "@/assets/about-workspace-tech.jpg";
 import aboutStrategy from "@/assets/about-strategy.jpg";
-import teamCeo from "@/assets/team-ceo.jpg";
-import teamLeadDev from "@/assets/team-lead-dev.jpg";
-import teamAiLead from "@/assets/team-ai-lead.jpg";
-import teamDesignLead from "@/assets/team-design-lead.jpg";
 
 const values = [
   {
@@ -43,33 +37,6 @@ const values = [
     icon: Users,
     title: "Collaboration",
     description: "We believe in the power of teamwork, both within our team and in partnership with our clients.",
-  },
-];
-
-const teamMembers = [
-  {
-    name: "Arjun Mehta",
-    role: "Founder & CEO",
-    bio: "Visionary technologist with 12+ years in enterprise software and AI. Passionate about making cutting-edge tech accessible to businesses of all sizes.",
-    image: teamCeo,
-  },
-  {
-    name: "Priya Sharma",
-    role: "Lead Developer",
-    bio: "Full-stack engineer specializing in React, Node.js, and cloud architecture. Leads our development team with a focus on scalable, maintainable code.",
-    image: teamLeadDev,
-  },
-  {
-    name: "Rahul Krishnan",
-    role: "AI & Data Lead",
-    bio: "Machine learning specialist with expertise in NLP, RAG pipelines, and GPT integrations. Architects our AI-powered automation solutions.",
-    image: teamAiLead,
-  },
-  {
-    name: "Ananya Reddy",
-    role: "UX & Project Lead",
-    bio: "Design-driven project manager ensuring every solution is user-centric. Bridges the gap between technical capability and business needs.",
-    image: teamDesignLead,
   },
 ];
 
@@ -118,8 +85,8 @@ const About = () => {
               className="relative"
             >
               <img
-                src={aboutTeamWorkspace}
-                alt="DiTech team collaborating in modern office"
+                src={aboutWorkspaceTech}
+                alt="DiTech technology workspace with AI dashboards"
                 className="rounded-2xl shadow-2xl w-full object-cover"
                 loading="lazy"
               />
@@ -216,70 +183,6 @@ const About = () => {
                 </CardContent>
               </Card>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Meet the Team */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Meet Our <span className="gradient-text">Team</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              The talented people behind DiTech's innovative solutions
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="h-full group hover:shadow-xl transition-all duration-300 border-border hover:border-primary/30 bg-card overflow-hidden">
-                  {/* Photo */}
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
-                  </div>
-
-                  <CardContent className="p-5 -mt-8 relative z-10">
-                    <h3 className="text-lg font-bold text-foreground mb-1">
-                      {member.name}
-                    </h3>
-                    <p className="text-sm font-medium text-primary mb-3">
-                      {member.role}
-                    </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {member.bio}
-                    </p>
-                    <div className="flex gap-3 mt-4">
-                      <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                        <Linkedin className="w-4 h-4" />
-                      </a>
-                      <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                        <Mail className="w-4 h-4" />
-                      </a>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
@@ -416,7 +319,7 @@ const About = () => {
                     className="flex items-center gap-3"
                   >
                     <CheckCircle className="h-5 w-5 text-accent flex-shrink-0" />
-                    <span className="text-white">{item}</span>
+                    <span className="text-white/90">{item}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -426,43 +329,45 @@ const About = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="grid grid-cols-2 gap-6"
+              className="text-center"
             >
-              <Card className="p-6 bg-white/10 border-white/20 text-center">
-                <div className="text-4xl font-bold text-accent mb-2">5+</div>
-                <div className="text-white/80">Years Experience</div>
-              </Card>
-              <Card className="p-6 bg-white/10 border-white/20 text-center">
-                <div className="text-4xl font-bold text-accent mb-2">150+</div>
-                <div className="text-white/80">Projects Completed</div>
-              </Card>
-              <Card className="p-6 bg-white/10 border-white/20 text-center">
-                <div className="text-4xl font-bold text-accent mb-2">50+</div>
-                <div className="text-white/80">Happy Clients</div>
-              </Card>
-              <Card className="p-6 bg-white/10 border-white/20 text-center">
-                <div className="text-4xl font-bold text-accent mb-2">99%</div>
-                <div className="text-white/80">Client Satisfaction</div>
-              </Card>
+              <div className="grid grid-cols-2 gap-4">
+                <Card className="p-6 bg-white/10 border-white/20">
+                  <div className="text-3xl font-bold text-accent mb-1">150+</div>
+                  <div className="text-sm text-white/80">Projects Delivered</div>
+                </Card>
+                <Card className="p-6 bg-white/10 border-white/20">
+                  <div className="text-3xl font-bold text-accent mb-1">50+</div>
+                  <div className="text-sm text-white/80">Happy Clients</div>
+                </Card>
+                <Card className="p-6 bg-white/10 border-white/20">
+                  <div className="text-3xl font-bold text-accent mb-1">5+</div>
+                  <div className="text-sm text-white/80">Years Experience</div>
+                </Card>
+                <Card className="p-6 bg-white/10 border-white/20">
+                  <div className="text-3xl font-bold text-accent mb-1">24/7</div>
+                  <div className="text-sm text-white/80">Support Available</div>
+                </Card>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA */}
       <section className="section-padding">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="gradient-bg rounded-3xl p-8 md:p-12 text-center"
+            className="gradient-bg rounded-3xl p-8 md:p-12 lg:p-16 text-center"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to Start Your Project?
+              Let's Build Something Great Together
             </h2>
             <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Let's discuss how we can help transform your business with our technology solutions.
+              Ready to transform your business with intelligent technology? Get in touch today.
             </p>
             <Button
               asChild
@@ -471,7 +376,7 @@ const About = () => {
               className="rounded-xl text-lg bg-white text-primary hover:bg-white/90"
             >
               <Link to="/contact">
-                Get in Touch <ArrowRight className="ml-2 h-5 w-5" />
+                Contact Us <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </motion.div>
