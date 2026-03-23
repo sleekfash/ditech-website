@@ -111,7 +111,7 @@ const Header = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 lg:hidden"
+            className="fixed inset-x-0 top-16 md:top-20 bottom-0 z-40 lg:hidden"
           >
             <div
               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
