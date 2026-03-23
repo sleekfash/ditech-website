@@ -41,6 +41,7 @@ interface ContactSubmission {
 const Admin = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
@@ -62,25 +63,49 @@ const Admin = () => {
   });
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
+    const checkAdminAccess = async (session: Session | null) => {
       if (!session) {
         navigate("/auth");
+        return;
       }
+
+      setSession(session);
+      setUser(session.user);
+
+      // Verify the user is an admin
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (!profile?.is_admin) {
+        toast({
+          title: "Access Denied",
+          description: "You do not have admin privileges.",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
+
+      setIsAdmin(true);
+      setLoading(false);
+      fetchPosts();
+      fetchContacts();
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+      // Re-check admin on auth state change
+      checkAdminAccess(session);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (!session) {
-        navigate("/auth");
-      } else {
-        setLoading(false);
-        fetchPosts();
-        fetchContacts();
-      }
+      checkAdminAccess(session);
     });
 
     return () => subscription.unsubscribe();
