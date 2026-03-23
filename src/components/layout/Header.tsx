@@ -121,7 +121,7 @@ const Header = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-20 left-4 right-4 glass-strong rounded-2xl p-6 shadow-xl"
+              className="absolute top-4 left-4 right-4 glass-strong rounded-2xl p-6 shadow-xl"
             >
               <div className="flex flex-col gap-2">
                 {navItems.map((item, index) => (
