@@ -83,7 +83,7 @@ async function recordRequest(supabase: any, ip: string): Promise<void> {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -103,7 +103,7 @@ serve(async (req) => {
     if (!isAllowed) {
       return new Response(
         JSON.stringify({ error: "Too many submissions. Please wait a moment before trying again." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -120,7 +120,7 @@ serve(async (req) => {
             error: "Invalid form data", 
             details: validationError.errors.map(e => ({ field: e.path.join("."), message: e.message }))
           }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
         );
       }
       throw validationError;
@@ -199,7 +199,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true, id: data.id }), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Contact form error occurred");
@@ -207,7 +207,7 @@ serve(async (req) => {
       JSON.stringify({ error: "Failed to submit form. Please try again." }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       }
     );
   }
