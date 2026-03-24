@@ -2,10 +2,21 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://ditechai.lovable.app",
+  "https://ditech.solutions",
+  "https://www.ditech.solutions",
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".lovable.app");
+  return {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? origin : ALLOWED_ORIGINS[0],
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
+}
 
 // Message validation schema
 const MessageSchema = z.object({
@@ -53,7 +64,7 @@ async function recordRequest(supabase: any, ip: string): Promise<void> {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -73,7 +84,7 @@ serve(async (req) => {
     if (!isAllowed) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please wait before trying again." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -87,7 +98,7 @@ serve(async (req) => {
       if (validationError instanceof z.ZodError) {
         return new Response(
           JSON.stringify({ error: "Invalid request format" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
         );
       }
       throw validationError;
@@ -155,30 +166,30 @@ CONVERSATION GUIDELINES:
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
           status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       if (response.status === 402) {
         return new Response(JSON.stringify({ error: "Service temporarily unavailable. Please try again later." }), {
           status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       console.error("AI gateway error:", response.status);
       return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream" },
     });
   } catch (error) {
     console.error("Chat error occurred");
     return new Response(JSON.stringify({ error: "An error occurred. Please try again." }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

@@ -2,10 +2,21 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://ditechai.lovable.app",
+  "https://ditech.solutions",
+  "https://www.ditech.solutions",
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".lovable.app");
+  return {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? origin : ALLOWED_ORIGINS[0],
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
+}
 
 // Server-side validation schema
 const ContactSchema = z.object({
@@ -72,7 +83,7 @@ async function recordRequest(supabase: any, ip: string): Promise<void> {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -92,7 +103,7 @@ serve(async (req) => {
     if (!isAllowed) {
       return new Response(
         JSON.stringify({ error: "Too many submissions. Please wait a moment before trying again." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -109,7 +120,7 @@ serve(async (req) => {
             error: "Invalid form data", 
             details: validationError.errors.map(e => ({ field: e.path.join("."), message: e.message }))
           }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
         );
       }
       throw validationError;
@@ -188,7 +199,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true, id: data.id }), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Contact form error occurred");
@@ -196,7 +207,7 @@ serve(async (req) => {
       JSON.stringify({ error: "Failed to submit form. Please try again." }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       }
     );
   }
