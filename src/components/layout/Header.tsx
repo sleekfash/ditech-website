@@ -9,8 +9,7 @@ import ditechLogo from "@/assets/ditech-logo.jpeg";
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "Solutions", href: "/solutions" },
-  { label: "Projects", href: "/projects" },
+  { label: "Solutions & Projects", href: "/solutions" },
   { label: "Shop", href: "/shop" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
