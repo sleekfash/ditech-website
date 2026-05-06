@@ -40,7 +40,7 @@ const Footer = () => {
               />
               <span className="font-bold text-2xl text-white">DiTech</span>
             </Link>
-            <p className="text-secondary-foreground/80 leading-relaxed">
+            <p className="text-white/80 leading-relaxed">
               Empowering businesses with innovative AI solutions, automation, and technology services.
             </p>
             <div className="flex gap-4">
@@ -83,7 +83,7 @@ const Footer = () => {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-secondary-foreground/80 hover:text-white transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -100,7 +100,7 @@ const Footer = () => {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-secondary-foreground/80 hover:text-white transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -115,19 +115,19 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-accent mt-0.5" />
-                <span className="text-secondary-foreground/80">
+                <span className="text-white/80">
                   info@ditechsolutions.com
                 </span>
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="h-5 w-5 text-accent mt-0.5" />
-                <span className="text-secondary-foreground/80">
+                <span className="text-white/80">
                   +1 (555) 123-4567
                 </span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-accent mt-0.5" />
-                <span className="text-secondary-foreground/80">
+                <span className="text-white/80">
                   123 Tech Drive, Innovation City
                 </span>
               </li>
@@ -138,10 +138,10 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-secondary-foreground/60 text-sm">
+            <p className="text-white/60 text-sm">
               © {currentYear} DiTech Solutions & Services. All rights reserved.
             </p>
-            <div className="flex gap-6 text-sm text-secondary-foreground/60">
+            <div className="flex gap-6 text-sm text-white/60">
               <Link to="/privacy" className="hover:text-white transition-colors">
                 Privacy Policy
               </Link>
