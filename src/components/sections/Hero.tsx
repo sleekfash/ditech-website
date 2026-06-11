@@ -21,19 +21,30 @@ const Hero = ({ onContactClick }: HeroProps) => {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
       
-      <div className="container relative z-10 px-4 py-20">
+      <div className="container relative z-10 px-4 pt-28 pb-20 sm:pt-32 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-4xl mx-auto text-center"
         >
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 rounded-full border border-border/60 bg-background/60 backdrop-blur-sm text-xs sm:text-sm text-muted-foreground"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            AI · Automation · Legal Tech
+          </motion.div>
+
           {/* Main headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
+            className="font-display text-[2.25rem] leading-[1.1] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
           >
             Transform Your Business with{" "}
             <span className="gradient-text">AI-Powered</span>
@@ -45,10 +56,10 @@ const Hero = ({ onContactClick }: HeroProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl md:max-w-3xl mx-auto mb-10 leading-relaxed"
           >
-            DiTech Solutions & Services empowers law firms, enterprises, and SMEs with 
-            intelligent automation, workflow orchestration, and bespoke 
+            DiTech Solutions & Services empowers law firms, enterprises, and SMEs with
+            intelligent automation, workflow orchestration, and bespoke
             full-stack solutions that deliver measurable impact.
           </motion.p>
 
