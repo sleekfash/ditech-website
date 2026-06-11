@@ -99,14 +99,14 @@ const Hero = ({ onContactClick }: HeroProps) => {
             <p className="text-sm text-muted-foreground mb-4">
               Trusted by legal professionals and enterprises
             </p>
-            <div className="flex flex-wrap justify-center gap-8 text-muted-foreground">
-              <span className="font-display font-semibold text-lg">Law Firms</span>
-              <span className="hidden sm:block">•</span>
-              <span className="font-display font-semibold text-lg">Senior Advocates</span>
-              <span className="hidden sm:block">•</span>
-              <span className="font-display font-semibold text-lg">International Retailers</span>
-              <span className="hidden sm:block">•</span>
-              <span className="font-display font-semibold text-lg">SMEs</span>
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-muted-foreground">
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">Law Firms</span>
+              <span className="hidden sm:inline opacity-40">•</span>
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">Senior Advocates</span>
+              <span className="hidden sm:inline opacity-40">•</span>
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">International Retailers</span>
+              <span className="hidden sm:inline opacity-40">•</span>
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">SMEs</span>
             </div>
           </motion.div>
         </motion.div>
