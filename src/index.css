@@ -132,10 +132,27 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
+    @apply tracking-tight;
+    text-wrap: balance;
+  }
+
+  h1 { @apply leading-[1.05]; }
+  h2 { @apply leading-[1.1]; }
+  h3, h4 { @apply leading-tight; }
+
+  p { text-wrap: pretty; }
+
+  /* Modern selection */
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
   }
 }
 
