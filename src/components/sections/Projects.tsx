@@ -101,22 +101,22 @@ const Projects = () => {
                 </div>
 
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <project.icon className="w-6 h-6 text-primary" />
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+                      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                        <project.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                       </div>
-                      <div>
-                        <CardTitle className="font-display text-xl flex items-center gap-2">
-                          {project.title}
+                      <div className="min-w-0 flex-1">
+                        <CardTitle className="font-display text-lg sm:text-xl leading-snug flex flex-wrap items-center gap-2 break-words">
+                          <span className="break-words">{project.title}</span>
                           {project.featured && (
-                            <Badge className="gradient-bg text-primary-foreground">Flagship</Badge>
+                            <Badge className="gradient-bg text-primary-foreground text-[10px] uppercase tracking-wide">Flagship</Badge>
                           )}
                         </CardTitle>
-                        <CardDescription>{project.subtitle}</CardDescription>
+                        <CardDescription className="mt-1 text-sm">{project.subtitle}</CardDescription>
                       </div>
                     </div>
-                    <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
