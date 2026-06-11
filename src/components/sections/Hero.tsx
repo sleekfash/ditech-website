@@ -21,19 +21,30 @@ const Hero = ({ onContactClick }: HeroProps) => {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
       
-      <div className="container relative z-10 px-4 py-20">
+      <div className="container relative z-10 px-4 pt-28 pb-20 sm:pt-32 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-4xl mx-auto text-center"
         >
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 rounded-full border border-border/60 bg-background/60 backdrop-blur-sm text-xs sm:text-sm text-muted-foreground"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            AI · Automation · Legal Tech
+          </motion.div>
+
           {/* Main headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
+            className="font-display text-[2.25rem] leading-[1.1] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
           >
             Transform Your Business with{" "}
             <span className="gradient-text">AI-Powered</span>
@@ -45,10 +56,10 @@ const Hero = ({ onContactClick }: HeroProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl md:max-w-3xl mx-auto mb-10 leading-relaxed"
           >
-            DiTech Solutions & Services empowers law firms, enterprises, and SMEs with 
-            intelligent automation, workflow orchestration, and bespoke 
+            DiTech Solutions & Services empowers law firms, enterprises, and SMEs with
+            intelligent automation, workflow orchestration, and bespoke
             full-stack solutions that deliver measurable impact.
           </motion.p>
 
@@ -61,7 +72,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
           >
             <Button
               size="lg"
-              className="gradient-bg text-primary-foreground text-lg px-8 py-6 glow-sm hover:glow transition-all"
+              className="gradient-bg text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 glow-sm hover:glow transition-all w-full sm:w-auto"
               onClick={onContactClick}
             >
               <Sparkles className="w-5 h-5 mr-2" />
@@ -71,7 +82,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 border-2 bg-background/80 backdrop-blur-sm"
+              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 bg-background/80 backdrop-blur-sm w-full sm:w-auto"
               onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Explore Services
@@ -88,14 +99,14 @@ const Hero = ({ onContactClick }: HeroProps) => {
             <p className="text-sm text-muted-foreground mb-4">
               Trusted by legal professionals and enterprises
             </p>
-            <div className="flex flex-wrap justify-center gap-8 text-muted-foreground">
-              <span className="font-display font-semibold text-lg">Law Firms</span>
-              <span className="hidden sm:block">•</span>
-              <span className="font-display font-semibold text-lg">Senior Advocates</span>
-              <span className="hidden sm:block">•</span>
-              <span className="font-display font-semibold text-lg">International Retailers</span>
-              <span className="hidden sm:block">•</span>
-              <span className="font-display font-semibold text-lg">SMEs</span>
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-muted-foreground">
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">Law Firms</span>
+              <span className="hidden sm:inline opacity-40">•</span>
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">Senior Advocates</span>
+              <span className="hidden sm:inline opacity-40">•</span>
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">International Retailers</span>
+              <span className="hidden sm:inline opacity-40">•</span>
+              <span className="font-display font-semibold text-sm sm:text-base md:text-lg">SMEs</span>
             </div>
           </motion.div>
         </motion.div>

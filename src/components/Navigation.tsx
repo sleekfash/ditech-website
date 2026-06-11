@@ -108,7 +108,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 top-16 z-[60] bg-background/95 backdrop-blur-xl md:hidden overflow-y-auto"
           >
             <div className="flex flex-col items-center justify-center h-full gap-8">
               {navItems.map((item, index) => (
