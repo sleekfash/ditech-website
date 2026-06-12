@@ -59,20 +59,24 @@ const Header = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === item.href
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <nav aria-label="Primary" className="hidden lg:flex items-center gap-1">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                      isActive
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Desktop Actions */}
@@ -90,12 +94,15 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="relative z-50"
+                className="relative z-50 min-h-11 min-w-11"
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-nav"
               >
                 {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" />
+                  <X className="h-6 w-6" aria-hidden="true" />
                 ) : (
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-6 w-6" aria-hidden="true" />
                 )}
               </Button>
             </div>
@@ -117,31 +124,37 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.nav
+              id="mobile-nav"
+              aria-label="Mobile primary"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="absolute top-4 left-4 right-4 glass-strong rounded-2xl p-6 shadow-xl"
             >
               <div className="flex flex-col gap-2">
-                {navItems.map((item, index) => (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Link
-                      to={item.href}
-                      className={`block px-4 py-3 rounded-xl text-lg font-medium transition-colors ${
-                        location.pathname === item.href
-                          ? "text-primary bg-primary/10"
-                          : "text-foreground hover:bg-muted"
-                      }`}
+                {navItems.map((item, index) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
                     >
-                      {item.label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        to={item.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`block px-4 py-3 rounded-xl text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                          isActive
+                            ? "text-primary bg-primary/10"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}

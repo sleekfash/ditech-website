@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale,
   FileText,
@@ -11,11 +12,13 @@ import {
   CheckCircle,
   Sparkles,
   ExternalLink,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/layout/Layout";
+import SectionScrollSpy from "@/components/SectionScrollSpy";
 import legalTechImg from "@/assets/legal-tech.jpg";
 
 const solutions = [
@@ -183,10 +186,20 @@ const scrollToProjects = () => {
 };
 
 const Solutions = () => {
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const spySections = [
+    { id: "overview", label: "Overview" },
+    { id: "benefits", label: "Benefits" },
+    { id: "solutions", label: "Solutions" },
+    { id: "projects", label: "Case Studies" },
+    { id: "integrations", label: "Integrations" },
+  ];
+
   return (
     <Layout>
+      <SectionScrollSpy sections={spySections} />
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section id="overview" className="relative py-24 md:py-32 overflow-hidden scroll-mt-32">
         <div className="absolute inset-0 gradient-bg-subtle" />
 
         <div className="container-custom relative z-10">
@@ -234,7 +247,7 @@ const Solutions = () => {
       </section>
 
       {/* Benefits */}
-      <section className="section-padding bg-secondary text-secondary-foreground">
+      <section id="benefits" className="section-padding bg-secondary text-secondary-foreground scroll-mt-32">
         <div className="container-custom">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
@@ -256,7 +269,7 @@ const Solutions = () => {
       </section>
 
       {/* Solutions Grid */}
-      <section className="section-padding">
+      <section id="solutions" className="section-padding scroll-mt-32">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -303,7 +316,7 @@ const Solutions = () => {
       </section>
 
       {/* Featured Projects */}
-      <section id="projects" className="section-padding gradient-bg-subtle scroll-mt-24">
+      <section id="projects" className="section-padding gradient-bg-subtle scroll-mt-32">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -342,59 +355,125 @@ const Solutions = () => {
 
           {/* Projects */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="h-full card-hover overflow-hidden bg-card border-border group">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-primary text-primary-foreground">{project.category}</Badge>
+            {projects.map((project, index) => {
+              const isOpen = expandedId === project.id;
+              const panelId = `case-study-${project.id}`;
+              return (
+                <motion.article
+                  key={project.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Card className="h-full card-hover overflow-hidden bg-card border-border group flex flex-col">
+                    <div className="relative aspect-video overflow-hidden">
+                      <img
+                        src={project.image}
+                        alt={`${project.title} — ${project.category} case study`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                        width={600}
+                        height={400}
+                      />
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-primary text-primary-foreground">{project.category}</Badge>
+                      </div>
                     </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                      <Calendar className="h-4 w-4" />
-                      <span>{project.year}</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">{project.title}</h3>
-                    <p className="text-muted-foreground mb-4">{project.description}</p>
+                    <CardContent className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                        <Calendar className="h-4 w-4" aria-hidden="true" />
+                        <span>{project.year}</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground mb-2">{project.title}</h3>
+                      <p className="text-muted-foreground mb-4">{project.description}</p>
 
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech) => (
-                        <Badge key={tech} variant="secondary" className="text-xs">
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.technologies.map((tech) => (
+                          <Badge key={tech} variant="secondary" className="text-xs">
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
 
-                    <div className="space-y-2 mb-4">
-                      {project.results.slice(0, 2).map((result, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm">
-                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                          <span className="text-muted-foreground">{result}</span>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            id={panelId}
+                            key="panel"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pt-2 pb-4 space-y-4">
+                              <div>
+                                <h4 className="text-sm font-semibold text-primary mb-2">Key Results</h4>
+                                <ul className="space-y-2">
+                                  {project.results.map((result, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-sm">
+                                      <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                                      <span className="text-foreground">{result}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <h4 className="text-sm font-semibold text-primary mb-2">Full Tech Stack</h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {project.technologies.map((tech) => (
+                                    <span
+                                      key={tech}
+                                      className="text-xs font-medium bg-primary/10 text-primary px-2.5 py-1 rounded-full"
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <Button asChild size="sm" className="gradient-bg rounded-xl w-full">
+                                <Link to="/contact" aria-label={`Discuss a project like ${project.title}`}>
+                                  Discuss a similar project
+                                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                                </Link>
+                              </Button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {!isOpen && (
+                        <div className="space-y-2 mb-4">
+                          {project.results.slice(0, 2).map((result, i) => (
+                            <div key={i} className="flex items-center gap-2 text-sm">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                              <span className="text-muted-foreground">{result}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      )}
 
-                    <Button variant="ghost" className="w-full justify-center group">
-                      View Case Study
-                      <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-center mt-auto min-h-11"
+                        onClick={() => setExpandedId(isOpen ? null : project.id)}
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                        aria-label={`${isOpen ? "Collapse" : "Expand"} case study for ${project.title}`}
+                      >
+                        {isOpen ? "Show less" : "View case study"}
+                        <ChevronDown
+                          className={`ml-2 h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                          aria-hidden="true"
+                        />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -420,7 +499,7 @@ const Solutions = () => {
       </section>
 
       {/* Integration Section */}
-      <section className="section-padding gradient-bg-subtle">
+      <section id="integrations" className="section-padding gradient-bg-subtle scroll-mt-32">
         <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
