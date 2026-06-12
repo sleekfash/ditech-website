@@ -59,20 +59,24 @@ const Header = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === item.href
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <nav aria-label="Primary" className="hidden lg:flex items-center gap-1">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                      isActive
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Desktop Actions */}
