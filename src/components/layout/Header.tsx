@@ -90,12 +90,15 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="relative z-50"
+                className="relative z-50 min-h-11 min-w-11"
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-nav"
               >
                 {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" />
+                  <X className="h-6 w-6" aria-hidden="true" />
                 ) : (
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-6 w-6" aria-hidden="true" />
                 )}
               </Button>
             </div>
