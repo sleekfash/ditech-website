@@ -253,8 +253,12 @@ const Shop = () => {
                         </Badge>
                       </div>
                     )}
-                    <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-card/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white dark:hover:bg-card">
-                      <Heart className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
+                    <button
+                      type="button"
+                      aria-label={`Add ${product.name} to favorites`}
+                      className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-card/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white dark:hover:bg-card focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Heart className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" aria-hidden="true" />
                     </button>
                     {!product.inStock && (
                       <div className="absolute inset-0 bg-background/80 flex items-center justify-center">

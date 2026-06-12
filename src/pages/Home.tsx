@@ -176,9 +176,10 @@ const Home = () => {
                     </p>
                     <Link
                       to={service.href}
-                      className="inline-flex items-center text-primary font-medium hover:underline"
+                      aria-label={`Learn more about ${service.title}`}
+                      className="inline-flex items-center text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                     >
-                      Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                      Learn more about {service.title} <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                     </Link>
                   </CardContent>
                 </Card>
