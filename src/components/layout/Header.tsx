@@ -124,31 +124,37 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.nav
+              id="mobile-nav"
+              aria-label="Mobile primary"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="absolute top-4 left-4 right-4 glass-strong rounded-2xl p-6 shadow-xl"
             >
               <div className="flex flex-col gap-2">
-                {navItems.map((item, index) => (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Link
-                      to={item.href}
-                      className={`block px-4 py-3 rounded-xl text-lg font-medium transition-colors ${
-                        location.pathname === item.href
-                          ? "text-primary bg-primary/10"
-                          : "text-foreground hover:bg-muted"
-                      }`}
+                {navItems.map((item, index) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
                     >
-                      {item.label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        to={item.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`block px-4 py-3 rounded-xl text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                          isActive
+                            ? "text-primary bg-primary/10"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
