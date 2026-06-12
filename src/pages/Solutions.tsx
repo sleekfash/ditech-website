@@ -269,7 +269,7 @@ const Solutions = () => {
       </section>
 
       {/* Solutions Grid */}
-      <section className="section-padding">
+      <section id="solutions" className="section-padding scroll-mt-32">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
