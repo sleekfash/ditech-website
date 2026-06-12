@@ -316,7 +316,7 @@ const Solutions = () => {
       </section>
 
       {/* Featured Projects */}
-      <section id="projects" className="section-padding gradient-bg-subtle scroll-mt-24">
+      <section id="projects" className="section-padding gradient-bg-subtle scroll-mt-32">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
