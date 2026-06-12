@@ -499,7 +499,7 @@ const Solutions = () => {
       </section>
 
       {/* Integration Section */}
-      <section className="section-padding gradient-bg-subtle">
+      <section id="integrations" className="section-padding gradient-bg-subtle scroll-mt-32">
         <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
