@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale,
   FileText,
@@ -11,11 +12,13 @@ import {
   CheckCircle,
   Sparkles,
   ExternalLink,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/layout/Layout";
+import SectionScrollSpy from "@/components/SectionScrollSpy";
 import legalTechImg from "@/assets/legal-tech.jpg";
 
 const solutions = [
