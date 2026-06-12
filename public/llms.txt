@@ -1,0 +1,15 @@
+# DiTech Solutions & Services
+
+> AI-powered automation, workflow orchestration, and custom software for law firms and SMEs.
+
+DiTech builds intelligent automation, legal-tech solutions, and full-stack applications. We help legal professionals and enterprises modernize through AI, n8n workflows, and bespoke development.
+
+## Pages
+
+- [Home](/): Overview of DiTech's AI automation and legal tech offerings.
+- [Services](/services): AI automation, workflow orchestration, full-stack development, and consulting.
+- [Solutions & Projects](/solutions): Industry solutions and case studies of delivered projects.
+- [Shop](/shop): Curated gadgets and hardware for modern tech-driven teams.
+- [Blog](/blog): Articles on AI, automation, and legal technology.
+- [About](/about): Company story, values, and team.
+- [Contact](/contact): Get in touch to discuss a project.
