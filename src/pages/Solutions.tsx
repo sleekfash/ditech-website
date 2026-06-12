@@ -186,10 +186,20 @@ const scrollToProjects = () => {
 };
 
 const Solutions = () => {
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const spySections = [
+    { id: "overview", label: "Overview" },
+    { id: "benefits", label: "Benefits" },
+    { id: "solutions", label: "Solutions" },
+    { id: "projects", label: "Case Studies" },
+    { id: "integrations", label: "Integrations" },
+  ];
+
   return (
     <Layout>
+      <SectionScrollSpy sections={spySections} />
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section id="overview" className="relative py-24 md:py-32 overflow-hidden scroll-mt-32">
         <div className="absolute inset-0 gradient-bg-subtle" />
 
         <div className="container-custom relative z-10">
