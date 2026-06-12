@@ -247,7 +247,7 @@ const Solutions = () => {
       </section>
 
       {/* Benefits */}
-      <section className="section-padding bg-secondary text-secondary-foreground">
+      <section id="benefits" className="section-padding bg-secondary text-secondary-foreground scroll-mt-32">
         <div className="container-custom">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
