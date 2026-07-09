@@ -352,32 +352,28 @@ const Services = () => {
       </section>
 
 
-      {/* CTA Section */}
+      {/* CTA */}
       <section className="section-padding">
         <div className="container-custom">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="gradient-bg rounded-3xl p-8 md:p-12 text-center"
+            className="relative overflow-hidden bg-[hsl(var(--ink))] text-[hsl(var(--background))] rounded-3xl p-10 md:p-16 text-center"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Not Sure Which Service You Need?
+            <div className="grain absolute inset-0 opacity-40 pointer-events-none" />
+            <span className="kicker text-[hsl(var(--brass))] relative">Talk to us</span>
+            <h2 className="serif text-3xl md:text-5xl mt-4 mb-6 relative">
+              Not sure which practice fits?
             </h2>
-            <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Let's discuss your requirements and find the perfect solution for your business.
+            <p className="text-lg text-[hsl(var(--background))]/75 mb-8 max-w-2xl mx-auto relative">
+              A short call and an honest brief — we'll point you to the right path, even if that path isn't us.
             </p>
-            <Button
-              asChild
-              size="lg"
-              variant="secondary"
-              className="rounded-xl text-lg bg-white text-primary hover:bg-white/90"
-            >
-              <Link to="/contact">
-                Schedule a Consultation <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+            <Button asChild size="lg" className="relative rounded-full bg-[hsl(var(--background))] text-[hsl(var(--ink))] hover:bg-[hsl(var(--brass))] px-8 py-6">
+              <Link to="/contact">Schedule a consultation <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" /></Link>
             </Button>
           </motion.div>
+
         </div>
       </section>
     </Layout>
