@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        sans: ['"Inter Tight"', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', '"Times New Roman"', 'serif'],
+        serif: ['Fraunces', '"Times New Roman"', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",

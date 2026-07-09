@@ -4,316 +4,196 @@ import { ArrowRight, Bot, Workflow, Scale, ShoppingCart, Code, Cpu, CheckCircle,
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/layout/Layout";
-import heroBg from "@/assets/hero-bg.jpg";
+import HeroSlider from "@/components/sections/HeroSlider";
+import ShopTeaser from "@/components/sections/ShopTeaser";
 import homeCollaboration from "@/assets/home-collaboration.jpg";
 import homeAiTech from "@/assets/home-ai-tech.jpg";
+import { site } from "@/config/site";
+import { shopHref } from "@/config/nav";
 
 const services = [
-  {
-    icon: Bot,
-    title: "AI Automation",
-    description: "Intelligent automation solutions that streamline your business processes and boost productivity.",
-    href: "/services#ai-automation",
-  },
-  {
-    icon: Workflow,
-    title: "Workflow Orchestration",
-    description: "Seamlessly connect and automate your business workflows with smart orchestration tools.",
-    href: "/services#workflow",
-  },
-  {
-    icon: Scale,
-    title: "Legal Tech Solutions",
-    description: "Cutting-edge technology solutions designed specifically for law firms and legal professionals.",
-    href: "/solutions",
-  },
-  {
-    icon: ShoppingCart,
-    title: "E-commerce Development",
-    description: "Build powerful online stores with integrated payment systems and inventory management.",
-    href: "/services#ecommerce",
-  },
-  {
-    icon: Code,
-    title: "Custom Development",
-    description: "Tailored software solutions built to meet your unique business requirements.",
-    href: "/services#development",
-  },
-  {
-    icon: Cpu,
-    title: "Hardware Solutions",
-    description: "Quality laptops, gadgets, and accessories for your technology needs.",
-    href: "/shop",
-  },
+  { icon: Bot, title: "AI Automation", description: "Intelligent systems that quietly do the tedious work.", href: "/services#ai-automation" },
+  { icon: Workflow, title: "Workflow Orchestration", description: "Compose 500+ services into one calm operation.", href: "/services#workflow" },
+  { icon: Scale, title: "Legal Tech", description: "Case management, transcription, research — engineered for counsel.", href: "/solutions" },
+  { icon: ShoppingCart, title: "E-commerce", description: "Storefronts, integrations, retail ops — from Shopify to POS.", href: "/services#ecommerce" },
+  { icon: Code, title: "Custom Development", description: "Full-stack builds shaped around your operating model.", href: "/services#development" },
+  { icon: Cpu, title: "Hardware & Shop", description: "Curated devices and kiosks — now folded into Services.", href: shopHref },
 ];
 
 const stats = [
-  { value: "150+", label: "Projects Delivered" },
-  { value: "50+", label: "Happy Clients" },
-  { value: "99%", label: "Client Satisfaction" },
-  { value: "24/7", label: "Support Available" },
+  { value: "150+", label: "Projects delivered" },
+  { value: "50+", label: "Clients worldwide" },
+  { value: "99%", label: "Client satisfaction" },
+  { value: "24/7", label: "White-glove support" },
 ];
 
 const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "CEO, LegalFirst",
-    content: "DiTech transformed our legal practice with their AI-powered case management system. We've seen a 40% increase in efficiency.",
-    rating: 5,
-  },
-  {
-    name: "Michael Chen",
-    role: "CTO, TechStart",
-    content: "The workflow automation solutions provided by DiTech have been game-changing for our operations. Highly recommended!",
-    rating: 5,
-  },
-  {
-    name: "Emily Davis",
-    role: "Director, RetailPro",
-    content: "Our e-commerce platform built by DiTech has exceeded all expectations. Sales are up 60% since launch.",
-    rating: 5,
-  },
+  { name: "Sarah Johnson", role: "CEO, LegalFirst", content: "DiTech's case management system quietly saved us 40% of the week. It feels like a private chief of staff." },
+  { name: "Michael Chen", role: "CTO, TechStart", content: "Their orchestration work replaced a small ops team. It is the most reliable system we run." },
+  { name: "Emily Davis", role: "Director, RetailPro", content: "The storefront they built lifted us 60% on launch. It looks and moves like nothing our competitors ship." },
 ];
 
 const Home = () => {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroBg})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/60" />
-        
-        <div className="container-custom relative z-10">
-          <div className="max-w-3xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                <Bot className="h-4 w-4" />
-                AI-Powered Solutions
-              </span>
-            </motion.div>
+      {/* Coastal hero slider (2 slides, crossfade + Ken-Burns) */}
+      <HeroSlider />
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6"
-            >
-              Transform Your Business with{" "}
-              <span className="gradient-text">Intelligent Technology</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed"
-            >
-              We deliver cutting-edge AI automation, workflow orchestration, and custom software solutions that drive real business results.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <Button asChild size="lg" className="gradient-bg rounded-xl text-lg">
-                <Link to="/contact">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-xl text-lg">
-                <Link to="/services">Explore Services</Link>
-              </Button>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Overview */}
-      <section className="section-padding gradient-bg-subtle">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Services
+      {/* Services overview */}
+      <section className="section-padding gradient-bg-subtle relative overflow-hidden">
+        <div className="grain absolute inset-0 pointer-events-none" />
+        <div className="container-custom relative">
+          <div className="max-w-2xl mb-16">
+            <span className="kicker">What we build</span>
+            <h2 className="serif text-4xl md:text-5xl lg:text-6xl mt-4 brass-rule">
+              A quiet studio. <span className="italic text-[hsl(var(--sea))]">Ambitious systems.</span>
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Comprehensive technology solutions tailored to your business needs
+            <p className="text-lg text-muted-foreground mt-8 max-w-xl">
+              Six practices, one senior team. We take on a small number of engagements per year so every build receives the attention of an atelier.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border/60 rounded-3xl overflow-hidden border border-border/60">
             {services.map((service, index) => (
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.06 }}
+                className="bg-card p-8 md:p-10 group hover:bg-[hsl(var(--surface))] transition-colors"
               >
-                <Card className="h-full card-hover bg-card border-border">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-4">
-                      <service.icon className="h-6 w-6 text-primary-foreground" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      {service.title}
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      {service.description}
-                    </p>
-                    <Link
-                      to={service.href}
-                      aria-label={`Learn more about ${service.title}`}
-                      className="inline-flex items-center text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-                    >
-                      Learn more about {service.title} <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-                    </Link>
-                  </CardContent>
-                </Card>
+                <service.icon className="h-6 w-6 text-[hsl(var(--sea))] mb-8" aria-hidden="true" />
+                <h3 className="serif text-2xl mb-3">{service.title}</h3>
+                <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
+                <Link
+                  to={service.href}
+                  aria-label={`Learn more about ${service.title}`}
+                  className="inline-flex items-center gap-2 text-sm text-[hsl(var(--sea))] hover:text-[hsl(var(--ink))] transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                >
+                  Learn more
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="section-padding bg-secondary text-secondary-foreground">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* Shop teaser (marquee) — briefly exposes the shop */}
+      <ShopTeaser />
+
+      {/* Stats — editorial band */}
+      <section className="section-padding bg-[hsl(var(--ink))] text-[hsl(var(--background))] relative overflow-hidden">
+        <div className="grain absolute inset-0 pointer-events-none opacity-30" />
+        <div className="container-custom relative">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
+                transition={{ delay: index * 0.08 }}
+                className="border-t border-[hsl(var(--brass))]/40 pt-6"
               >
-                <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
+                <div className="serif text-5xl md:text-6xl text-[hsl(var(--background))] mb-3">
                   {stat.value}
                 </div>
-                <div className="text-secondary-foreground/80">{stat.label}</div>
+                <div className="kicker text-[hsl(var(--brass))]">{stat.label}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us - with image */}
+      {/* Why choose */}
       <section className="section-padding">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Why Choose DiTech?
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <span className="kicker">Why {site.brand.name}</span>
+              <h2 className="serif text-4xl md:text-5xl mt-4 mb-8 brass-rule">
+                Senior hands on every deliverable.
               </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                We combine technical expertise with a deep understanding of business needs to deliver solutions that make a real impact.
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                We combine deep technical practice with a genuine understanding of how your business actually operates — and we don't hand you off to juniors.
               </p>
               <ul className="space-y-4">
                 {[
-                  "Expert team with diverse industry experience",
-                  "Cutting-edge AI and automation technologies",
-                  "Tailored solutions for your unique needs",
-                  "Ongoing support and maintenance",
-                  "Transparent pricing and communication",
-                ].map((item, index) => (
+                  "Principal-led engagements, end to end",
+                  "AI, automation and legal tech under one roof",
+                  "Bespoke systems shaped to your workflow",
+                  "Ongoing stewardship, not just delivery",
+                  "Transparent scope, transparent price",
+                ].map((item, i) => (
                   <motion.li
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
+                    key={i}
+                    initial={{ opacity: 0, x: -12 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3"
+                    transition={{ delay: i * 0.06 }}
+                    className="flex items-start gap-3"
                   >
-                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[hsl(var(--sea))] flex-shrink-0 mt-0.5" aria-hidden="true" />
                     <span className="text-foreground">{item}</span>
                   </motion.li>
                 ))}
               </ul>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative">
               <img
                 src={homeCollaboration}
                 alt="Team collaborating on AI-powered business solutions"
-                className="rounded-2xl shadow-2xl w-full object-cover"
                 loading="lazy"
+                decoding="async"
+                className="rounded-3xl w-full object-cover aspect-[4/5] shadow-[0_40px_100px_-40px_hsl(var(--ink)/0.4)]"
               />
+              <div className="absolute -bottom-6 -left-6 hidden md:block glass rounded-2xl p-5 max-w-[220px]">
+                <div className="kicker mb-2">Selected clients</div>
+                <div className="serif text-base leading-snug">Senior counsel, retailers, SMEs & founders.</div>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* AI Technology Showcase */}
-      <section className="section-padding gradient-bg-subtle">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="order-2 lg:order-1"
-            >
+      {/* AI showcase */}
+      <section className="section-padding gradient-bg-subtle relative overflow-hidden">
+        <div className="grain absolute inset-0 pointer-events-none" />
+        <div className="container-custom relative">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="order-2 lg:order-1">
               <img
                 src={homeAiTech}
                 alt="AI technology and intelligent automation interfaces"
-                className="rounded-2xl shadow-2xl w-full object-cover"
                 loading="lazy"
+                decoding="async"
+                className="rounded-3xl w-full object-cover aspect-[4/5]"
               />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="order-1 lg:order-2"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Powered by <span className="gradient-text">Cutting-Edge AI</span>
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="order-1 lg:order-2">
+              <span className="kicker">The stack</span>
+              <h2 className="serif text-4xl md:text-5xl mt-4 mb-8 brass-rule">
+                Powered by <span className="italic text-[hsl(var(--sea))]">discerning AI</span>.
               </h2>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Our solutions leverage the latest in artificial intelligence, from natural language processing to computer vision, delivering automation that truly understands your business context.
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                We ship on the technology that has earned its keep. No gimmicks, no shifting fashion — only what makes your operation quieter, sharper and more precise.
               </p>
               <div className="grid grid-cols-2 gap-4">
-                <Card className="p-4 bg-card border-border">
-                  <div className="text-2xl font-bold text-primary mb-1">GPT-5</div>
-                  <div className="text-sm text-muted-foreground">Language Models</div>
-                </Card>
-                <Card className="p-4 bg-card border-border">
-                  <div className="text-2xl font-bold text-primary mb-1">RAG</div>
-                  <div className="text-sm text-muted-foreground">Knowledge Retrieval</div>
-                </Card>
-                <Card className="p-4 bg-card border-border">
-                  <div className="text-2xl font-bold text-primary mb-1">n8n</div>
-                  <div className="text-sm text-muted-foreground">Workflow Engine</div>
-                </Card>
-                <Card className="p-4 bg-card border-border">
-                  <div className="text-2xl font-bold text-primary mb-1">500+</div>
-                  <div className="text-sm text-muted-foreground">Integrations</div>
-                </Card>
+                {[
+                  { k: "GPT-5", v: "Language models" },
+                  { k: "RAG", v: "Retrieval systems" },
+                  { k: "n8n", v: "Workflow engine" },
+                  { k: "500+", v: "Integrations" },
+                ].map((c) => (
+                  <div key={c.k} className="p-5 rounded-2xl border border-border bg-card">
+                    <div className="serif text-3xl text-[hsl(var(--sea))] mb-1">{c.k}</div>
+                    <div className="kicker">{c.v}</div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </div>
@@ -323,89 +203,67 @@ const Home = () => {
       {/* Testimonials */}
       <section className="section-padding">
         <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              What Our Clients Say
+          <div className="max-w-2xl mb-16">
+            <span className="kicker">Kind words</span>
+            <h2 className="serif text-4xl md:text-5xl mt-4 brass-rule">
+              Read by the people we quietly serve.
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Trusted by businesses across industries
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((t, i) => (
               <motion.div
-                key={testimonial.name}
+                key={t.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: i * 0.08 }}
+                className="p-8 md:p-10 rounded-3xl border border-border bg-card card-hover"
               >
-                <Card className="h-full bg-card border-border">
-                  <CardContent className="p-6">
-                    <div className="flex gap-1 mb-4">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-accent text-accent" />
-                      ))}
-                    </div>
-                    <p className="text-foreground mb-6 leading-relaxed">
-                      "{testimonial.content}"
-                    </p>
-                    <div>
-                      <div className="font-semibold text-foreground">
-                        {testimonial.name}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {testimonial.role}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="flex gap-1 mb-6">
+                  {Array.from({ length: 5 }).map((_, k) => (
+                    <Star key={k} className="h-4 w-4 fill-[hsl(var(--brass))] text-[hsl(var(--brass))]" aria-hidden="true" />
+                  ))}
+                </div>
+                <p className="serif text-xl leading-snug mb-8">"{t.content}"</p>
+                <div>
+                  <div className="font-medium text-foreground">{t.name}</div>
+                  <div className="text-sm text-muted-foreground">{t.role}</div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA */}
       <section className="section-padding">
         <div className="container-custom">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="gradient-bg rounded-3xl p-8 md:p-12 lg:p-16 text-center"
+            className="relative overflow-hidden bg-[hsl(var(--ink))] text-[hsl(var(--background))] rounded-3xl p-10 md:p-16 lg:p-20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to Transform Your Business?
-            </h2>
-            <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Let's discuss how our technology solutions can help you achieve your business goals.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                variant="secondary"
-                className="rounded-xl text-lg bg-white text-primary hover:bg-white/90"
-              >
-                <Link to="/contact">
-                  Contact Us <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="rounded-xl text-lg border-white text-white hover:bg-white/10"
-              >
-                <Link to="/projects">View Our Work</Link>
-              </Button>
+            <div className="grain absolute inset-0 pointer-events-none opacity-40" />
+            <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[hsl(var(--brass))]/15 blur-3xl" />
+            <div className="relative max-w-2xl">
+              <span className="kicker text-[hsl(var(--brass))]">Ready when you are</span>
+              <h2 className="serif text-4xl md:text-5xl lg:text-6xl mt-4 mb-6">
+                Let's build something <span className="italic text-[hsl(var(--brass))]">worth building</span>.
+              </h2>
+              <p className="text-lg text-[hsl(var(--background))]/75 mb-10 leading-relaxed">
+                A short call, an honest brief, and a considered proposal within the week.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild size="lg" className="rounded-full bg-[hsl(var(--background))] text-[hsl(var(--ink))] hover:bg-[hsl(var(--brass))] hover:text-[hsl(var(--ink))] px-8 py-6 text-base">
+                  <Link to="/contact">
+                    Start a project <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-full border-[hsl(var(--background))]/25 bg-transparent text-[hsl(var(--background))] hover:bg-[hsl(var(--background))]/10 px-8 py-6 text-base">
+                  <Link to="/solutions">See our work</Link>
+                </Button>
+              </div>
             </div>
           </motion.div>
         </div>
