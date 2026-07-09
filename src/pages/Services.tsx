@@ -1,21 +1,28 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  Bot, 
-  Workflow, 
-  Code, 
-  ShoppingCart, 
-  Cpu, 
-  Database, 
-  Cloud, 
+import {
+  Bot,
+  Workflow,
+  Code,
+  ShoppingCart,
+  Cpu,
+  Database,
+  Cloud,
   Shield,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  Search,
+  Star,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import Layout from "@/components/layout/Layout";
 import servicesBg from "@/assets/services-bg.jpg";
+import { products, productCategories } from "@/config/products";
 
 const services = [
   {
