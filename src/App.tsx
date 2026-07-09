@@ -10,7 +10,7 @@ import Home from "./pages/Home";
 // Below-the-fold routes are code-split for faster initial paint
 const Services = lazy(() => import("./pages/Services"));
 const Solutions = lazy(() => import("./pages/Solutions"));
-const Shop = lazy(() => import("./pages/Shop"));
+// Shop merged into Services — /shop redirects to /services#shop
 const Blog = lazy(() => import("./pages/Blog"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
