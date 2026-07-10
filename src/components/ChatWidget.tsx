@@ -89,6 +89,9 @@ const ChatWidget = () => {
             messages: apiMessages.slice(1),
             context: { products: productContext },
           }),
+        }
+      );
+
 
       if (!response.ok) {
         if (response.status === 429) {
