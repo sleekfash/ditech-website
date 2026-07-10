@@ -5,6 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 import { toast } from "sonner";
+import { products } from "@/config/products";
+
+// D5: Slim projection of the catalog sent alongside every chat request.
+const productContext = products.map((p) => ({
+  id: p.id,
+  name: p.name,
+  category: p.category,
+  price: p.price,
+  inStock: p.inStock,
+  rating: p.rating,
+  reviews: p.reviews,
+  badge: p.badge ?? undefined,
+  originalPrice: p.originalPrice ?? undefined,
+}));
 
 interface Message {
   id: string;
@@ -71,9 +85,10 @@ const ChatWidget = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ messages: apiMessages.slice(1) }), // Skip initial greeting
-        }
-      );
+          body: JSON.stringify({
+            messages: apiMessages.slice(1),
+            context: { products: productContext },
+          }),
 
       if (!response.ok) {
         if (response.status === 429) {
