@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Calendar, Clock, User, ArrowRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://ditechai.lovable.app/" },
+    { "@type": "ListItem", position: 2, name: "Blog", item: "https://ditechai.lovable.app/blog" },
+  ],
+};
 
 interface BlogPost {
   id: string;
@@ -131,6 +141,14 @@ const Blog = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Blog — Insights on AI, Automation & Legal Tech | DiTech</title>
+        <meta name="description" content="Articles on AI in legal practice, workflow orchestration, e-commerce automation and bespoke development from the DiTech studio." />
+        <link rel="canonical" href="https://ditechai.lovable.app/blog" />
+        <meta property="og:title" content="Blog — Insights on AI, Automation & Legal Tech | DiTech" />
+        <meta property="og:url" content="https://ditechai.lovable.app/blog" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+      </Helmet>
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 gradient-bg-subtle" />

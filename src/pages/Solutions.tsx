@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale,
@@ -20,6 +21,15 @@ import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/layout/Layout";
 import SectionScrollSpy from "@/components/SectionScrollSpy";
 import legalTechImg from "@/assets/legal-tech.jpg";
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://ditechai.lovable.app/" },
+    { "@type": "ListItem", position: 2, name: "Solutions", item: "https://ditechai.lovable.app/solutions" },
+  ],
+};
 
 const solutions = [
   {
@@ -197,6 +207,14 @@ const Solutions = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Solutions — Legal Tech & AI Case Systems | DiTech</title>
+        <meta name="description" content="Case management, AI transcription, automated drafting and legal research — bespoke solutions for senior counsel and firms." />
+        <link rel="canonical" href="https://ditechai.lovable.app/solutions" />
+        <meta property="og:title" content="Solutions — Legal Tech & AI Case Systems | DiTech" />
+        <meta property="og:url" content="https://ditechai.lovable.app/solutions" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+      </Helmet>
       <SectionScrollSpy sections={spySections} />
       {/* Hero Section */}
       <section id="overview" className="relative py-24 md:py-32 overflow-hidden scroll-mt-32">
