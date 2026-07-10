@@ -207,6 +207,14 @@ const Solutions = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Solutions — Legal Tech & AI Case Systems | DiTech</title>
+        <meta name="description" content="Case management, AI transcription, automated drafting and legal research — bespoke solutions for senior counsel and firms." />
+        <link rel="canonical" href="https://ditechai.lovable.app/solutions" />
+        <meta property="og:title" content="Solutions — Legal Tech & AI Case Systems | DiTech" />
+        <meta property="og:url" content="https://ditechai.lovable.app/solutions" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+      </Helmet>
       <SectionScrollSpy sections={spySections} />
       {/* Hero Section */}
       <section id="overview" className="relative py-24 md:py-32 overflow-hidden scroll-mt-32">

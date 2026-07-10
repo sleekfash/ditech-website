@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Calendar, Clock, User, ArrowRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://ditechai.lovable.app/" },
+    { "@type": "ListItem", position: 2, name: "Blog", item: "https://ditechai.lovable.app/blog" },
+  ],
+};
 
 interface BlogPost {
   id: string;

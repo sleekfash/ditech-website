@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { 
-  Target, 
-  Eye, 
-  Heart, 
-  Users, 
-  Award, 
+import {
+  Target,
+  Eye,
+  Heart,
+  Users,
+  Award,
   Lightbulb,
   ArrowRight,
   CheckCircle,
@@ -13,6 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/layout/Layout";
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://ditechai.lovable.app/" },
+    { "@type": "ListItem", position: 2, name: "About", item: "https://ditechai.lovable.app/about" },
+  ],
+};
 
 import aboutWorkspaceTech from "@/assets/about-workspace-tech.jpg";
 import aboutStrategy from "@/assets/about-strategy.jpg";
