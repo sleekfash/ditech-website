@@ -168,6 +168,14 @@ serve(async (req) => {
         "\n\nCURRENT PRODUCT CATALOG: no products currently available. If asked to recommend hardware, say inventory is unavailable and redirect the conversation to services or the contact form.";
     }
 
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    // Record this request for rate limiting
+    await recordRequest(supabase, ip);
+
     const systemPrompt = `You are DiTech AI, a helpful sales assistant for DiTech Solutions & Services — a boutique tech consultancy.
 
 ABOUT DITECH:
