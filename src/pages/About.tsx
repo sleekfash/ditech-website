@@ -62,6 +62,14 @@ const milestones = [
 const About = () => {
   return (
     <Layout>
+      <Helmet>
+        <title>About — DiTech Solutions & Services</title>
+        <meta name="description" content="A boutique studio delivering AI, automation and bespoke development for senior counsel, retailers and SMEs — principal-led, end to end." />
+        <link rel="canonical" href="https://ditechai.lovable.app/about" />
+        <meta property="og:title" content="About — DiTech Solutions & Services" />
+        <meta property="og:url" content="https://ditechai.lovable.app/about" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+      </Helmet>
       {/* Hero Section */}
       <section className="relative py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 gradient-bg-subtle" />

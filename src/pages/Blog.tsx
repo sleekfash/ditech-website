@@ -141,6 +141,14 @@ const Blog = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Blog — Insights on AI, Automation & Legal Tech | DiTech</title>
+        <meta name="description" content="Articles on AI in legal practice, workflow orchestration, e-commerce automation and bespoke development from the DiTech studio." />
+        <link rel="canonical" href="https://ditechai.lovable.app/blog" />
+        <meta property="og:title" content="Blog — Insights on AI, Automation & Legal Tech | DiTech" />
+        <meta property="og:url" content="https://ditechai.lovable.app/blog" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+      </Helmet>
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 gradient-bg-subtle" />
