@@ -52,7 +52,10 @@ const HeroSlider = () => {
             width={1920}
             height={1088}
             className="w-full h-full object-cover"
-            fetchPriority="high"
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
+            // D1: Only first slide is the LCP candidate.
+            fetchPriority={index === 0 ? "high" : "auto"}
           />
         </motion.div>
       </AnimatePresence>
