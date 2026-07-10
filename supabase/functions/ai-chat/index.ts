@@ -24,10 +24,31 @@ const MessageSchema = z.object({
   content: z.string().max(10000, "Message content too long"),
 });
 
+// D5: Product context contract — bounded catalog, optional.
+const ProductSchema = z.object({
+  id: z.union([z.string(), z.number()]),
+  name: z.string().max(200),
+  category: z.string().max(80),
+  price: z.number(),
+  inStock: z.boolean(),
+  rating: z.number().optional(),
+  reviews: z.number().optional(),
+  badge: z.string().max(60).nullable().optional(),
+  originalPrice: z.number().nullable().optional(),
+});
+
+const MAX_PRODUCTS = 50;
+const MAX_CONTEXT_BYTES = 25_000;
+
 const RequestSchema = z.object({
   messages: z.array(MessageSchema)
     .min(1, "At least one message is required")
     .max(50, "Too many messages in conversation"),
+  context: z
+    .object({
+      products: z.array(ProductSchema).max(200).optional(),
+    })
+    .optional(),
 });
 
 // Rate limiting configuration
@@ -104,18 +125,50 @@ serve(async (req) => {
       throw validationError;
     }
 
-    const { messages } = validatedData;
+    const { messages, context } = validatedData;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    // D5: Bound + dedupe product context before injecting into prompt.
+    let productBlock = "";
+    let truncated = false;
+    if (context?.products && context.products.length > 0) {
+      const rawSize = JSON.stringify(context.products).length;
+      if (rawSize > MAX_CONTEXT_BYTES) {
+        return new Response(
+          JSON.stringify({ error: "Product context too large" }),
+          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        );
+      }
+      const seen = new Set<string>();
+      const deduped = context.products.filter((p) => {
+        const key = String(p.id);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      truncated = deduped.length > MAX_PRODUCTS;
+      const bounded = deduped.slice(0, MAX_PRODUCTS);
+      const lines = bounded.map((p) => {
+        const parts: string[] = [
+          `- [${p.id}] ${p.name} (${p.category})`,
+          `$${p.price.toLocaleString()}`,
+        ];
+        if (p.originalPrice) parts.push(`was $${p.originalPrice.toLocaleString()}`);
+        if (typeof p.rating === "number") parts.push(`${p.rating}★`);
+        if (typeof p.reviews === "number") parts.push(`${p.reviews} reviews`);
+        parts.push(p.inStock ? "in stock" : "out of stock");
+        if (p.badge) parts.push(p.badge);
+        return parts.join(" · ");
+      });
+      productBlock =
+        "\n\nCURRENT PRODUCT CATALOG (recommend ONLY from this list; refer to items by name):\n" +
+        lines.join("\n") +
+        (truncated ? "\n... (truncated)" : "");
+    } else if (context && context.products && context.products.length === 0) {
+      productBlock =
+        "\n\nCURRENT PRODUCT CATALOG: no products currently available. If asked to recommend hardware, say inventory is unavailable and redirect the conversation to services or the contact form.";
     }
 
-    // Record this request for rate limiting
-    await recordRequest(supabase, ip);
-
-    const systemPrompt = `You are DiTech AI, a helpful sales assistant for DiTech Solutions & Services - a government-registered tech consultancy since 2020 with 12+ years of cumulative industry experience.
+    const systemPrompt = `You are DiTech AI, a helpful sales assistant for DiTech Solutions & Services — a boutique tech consultancy.
 
 ABOUT DITECH:
 DiTech specializes in AI-powered automation, full-stack development, workflow orchestration, legal tech, and hardware solutions. Our tagline is "Practical AI. Reliable Automation. Tangible Results."
@@ -123,28 +176,28 @@ DiTech specializes in AI-powered automation, full-stack development, workflow or
 TARGET CLIENTS: Law firms, judges, senior advocates, international retailers, SMEs
 
 KEY SERVICES:
-1. AI-Powered Automation - GPT-5, RAG pipelines, intelligent document processing
+1. AI-Powered Automation - LLMs, RAG pipelines, intelligent document processing
 2. Workflow Orchestration - n8n deployments, webhook integrations, deterministic automation
 3. Full-Stack Development - React, TypeScript, Node.js, cloud infrastructure
-4. Legal Tech Solutions - Case management, AI transcription (Whisper), automated drafting, legal research
+4. Legal Tech Solutions - Case management, AI transcription, automated drafting, legal research
 5. E-commerce & Retail Integrations - Multi-channel inventory, automated fulfillment
 6. Hardware & Kiosk Deployments - Physical installations, IoT integrations
 7. Consulting & Training - Workshops, strategy sessions
-
-KEY DIFFERENTIATORS:
-- Hybrid GPT-5 + n8n approach: AI decisioning with deterministic workflows
-- Legal tech specialization with 65% drafting time reduction
-- 99.9% system uptime guarantee
-- 40% faster case processing
 
 CONVERSATION GUIDELINES:
 - Be friendly, professional, and helpful
 - Answer questions about services clearly
 - Pre-qualify leads by understanding their needs
-- Suggest relevant services based on their requirements
-- For detailed pricing or project discussions, encourage them to fill out the contact form
+- For detailed pricing or project discussions, encourage the contact form
 - Keep responses concise but informative (2-4 sentences typically)
-- If asked about things unrelated to DiTech, politely redirect the conversation`;
+- If asked about things unrelated to DiTech, politely redirect
+
+PRODUCT RECOMMENDATION RULES:
+- When a user asks about hardware/gadgets/products, ONLY reference items from the CURRENT PRODUCT CATALOG below. Never invent SKUs or prices.
+- Describe products in plain language (what it is, standout specs, who it suits).
+- Ask 1-2 clarifying questions when needed (budget, use case, OS preference, portability, screen size).
+- Recommend 1-3 items, name them exactly as listed, mention the price, and note if out of stock.
+- If the requested category is empty in the catalog, say so and suggest an adjacent category or the contact form.${productBlock}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
