@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Bot, Workflow, Scale, ShoppingCart, Code, Cpu, CheckCircle, Star } from "lucide-react";
@@ -5,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/layout/Layout";
 import HeroSlider from "@/components/sections/HeroSlider";
-import ShopTeaser from "@/components/sections/ShopTeaser";
 import homeCollaboration from "@/assets/home-collaboration.jpg";
 import homeAiTech from "@/assets/home-ai-tech.jpg";
 import { site } from "@/config/site";
 import { shopHref } from "@/config/nav";
+
+// D1: Below-the-fold section lazy-loaded to reduce initial JS.
+const ShopTeaser = lazy(() => import("@/components/sections/ShopTeaser"));
 
 const services = [
   { icon: Bot, title: "AI Automation", description: "Intelligent systems that quietly do the tedious work.", href: "/services#ai-automation" },
@@ -81,7 +84,10 @@ const Home = () => {
       </section>
 
       {/* Shop teaser (marquee) — briefly exposes the shop */}
-      <ShopTeaser />
+      <Suspense fallback={<div className="min-h-[200px]" aria-hidden="true" />}>
+        <ShopTeaser />
+      </Suspense>
+
 
       {/* Stats — editorial band */}
       <section className="section-padding bg-[hsl(var(--ink))] text-[hsl(var(--background))] relative overflow-hidden">
@@ -146,6 +152,8 @@ const Home = () => {
               <img
                 src={homeCollaboration}
                 alt="Team collaborating on AI-powered business solutions"
+                width={1200}
+                height={1500}
                 loading="lazy"
                 decoding="async"
                 className="rounded-3xl w-full object-cover aspect-[4/5] shadow-[0_40px_100px_-40px_hsl(var(--ink)/0.4)]"
@@ -168,6 +176,8 @@ const Home = () => {
               <img
                 src={homeAiTech}
                 alt="AI technology and intelligent automation interfaces"
+                width={1200}
+                height={1500}
                 loading="lazy"
                 decoding="async"
                 className="rounded-3xl w-full object-cover aspect-[4/5]"
