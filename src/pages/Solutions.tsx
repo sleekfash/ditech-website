@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale,
@@ -20,6 +21,15 @@ import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/layout/Layout";
 import SectionScrollSpy from "@/components/SectionScrollSpy";
 import legalTechImg from "@/assets/legal-tech.jpg";
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://ditechai.lovable.app/" },
+    { "@type": "ListItem", position: 2, name: "Solutions", item: "https://ditechai.lovable.app/solutions" },
+  ],
+};
 
 const solutions = [
   {
