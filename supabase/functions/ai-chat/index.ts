@@ -18,13 +18,11 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Message validation schema
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant", "system"]),
   content: z.string().max(10000, "Message content too long"),
 });
 
-// D5: Product context contract — bounded catalog, optional.
 const ProductSchema = z.object({
   id: z.union([z.string(), z.number()]),
   name: z.string().max(200),
@@ -44,6 +42,7 @@ const RequestSchema = z.object({
   messages: z.array(MessageSchema)
     .min(1, "At least one message is required")
     .max(50, "Too many messages in conversation"),
+  sessionId: z.string().min(6).max(80).optional(),
   context: z
     .object({
       products: z.array(ProductSchema).max(200).optional(),
@@ -51,15 +50,12 @@ const RequestSchema = z.object({
     .optional(),
 });
 
-// Rate limiting configuration
-const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 15; // Max 15 AI requests per minute per IP
+const RATE_LIMIT_WINDOW_MS = 60000;
+const RATE_LIMIT_MAX_REQUESTS = 15;
 
 // deno-lint-ignore no-explicit-any
 async function checkRateLimit(supabase: any, ip: string): Promise<boolean> {
-  const now = new Date();
-  const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS);
-
+  const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS);
   const { count, error } = await supabase
     .from("rate_limits")
     .select("*", { count: "exact", head: true })
@@ -69,19 +65,56 @@ async function checkRateLimit(supabase: any, ip: string): Promise<boolean> {
 
   if (error) {
     console.error("Rate limit check error:", error.code);
-    return true; // Allow on error
+    return true;
   }
-
   return (count ?? 0) < RATE_LIMIT_MAX_REQUESTS;
 }
 
 // deno-lint-ignore no-explicit-any
 async function recordRequest(supabase: any, ip: string): Promise<void> {
-  await supabase.from("rate_limits").insert({
-    identifier: ip,
-    endpoint: "ai-chat",
-  });
+  await supabase.from("rate_limits").insert({ identifier: ip, endpoint: "ai-chat" });
 }
+
+const DEFAULT_BASE_PROMPT = `You are Orcka, the AI assistant for DiTech Solutions & Services — a boutique studio building bespoke AI, automation and legal-tech systems.
+
+ABOUT DITECH:
+Tagline: "Practical AI. Reliable Automation. Tangible Results."
+Target clients: law firms, judges, senior advocates, international retailers, SMEs.
+
+KEY SERVICES:
+1. AI-Powered Automation — LLMs, RAG pipelines, intelligent document processing
+2. Workflow Orchestration — n8n deployments, webhook integrations, deterministic automation
+3. Full-Stack Development — React, TypeScript, Node.js, cloud infrastructure
+4. Legal Tech Solutions — case management, AI transcription, automated drafting, legal research
+5. E-commerce & Retail Integrations — multi-channel inventory, automated fulfillment
+6. Hardware & Kiosk Deployments — physical installations, IoT integrations
+7. Consulting & Training — workshops, strategy sessions
+
+CONVERSATION GUIDELINES:
+- Be friendly, professional and helpful
+- Answer questions about services clearly and pre-qualify leads by understanding their needs
+- For detailed pricing or project scoping, point people to the contact form
+- If asked about things unrelated to DiTech, politely redirect
+
+PRODUCT RECOMMENDATION RULES:
+- When a user asks about hardware/gadgets/products, ONLY reference items from the CURRENT PRODUCT CATALOG. Never invent SKUs or prices.
+- Describe products in plain language (what it is, standout specs, who it suits).
+- Ask 1-2 clarifying questions when needed (budget, use case, OS preference, portability, screen size).
+- Recommend 1-3 items, name them exactly as listed, mention the price, and note if out of stock.
+- If the requested category is empty in the catalog, say so and suggest an adjacent category or the contact form.`;
+
+const TONE_HINTS: Record<string, string> = {
+  professional: "Tone: polished, precise and businesslike.",
+  warm: "Tone: warm, human and encouraging while staying professional.",
+  concise: "Tone: direct and efficient. No filler, no preamble.",
+  consultative: "Tone: consultative — diagnose the need with questions before recommending.",
+};
+
+const LENGTH_HINTS: Record<string, string> = {
+  short: "Keep replies to 1-2 short sentences unless the user asks for detail.",
+  medium: "Keep replies to 2-4 sentences unless the user asks for detail.",
+  long: "You may answer in up to 2 short paragraphs when the question warrants it.",
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -89,18 +122,15 @@ serve(async (req) => {
   }
 
   try {
-    // Create Supabase client for rate limiting
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get client IP — use rightmost x-forwarded-for value (infrastructure-set, not client-controlled)
     const forwardedFor = req.headers.get("x-forwarded-for");
-    const ip = req.headers.get("x-real-ip") || 
-               (forwardedFor ? forwardedFor.split(",").at(-1)?.trim() : null) || 
+    const ip = req.headers.get("x-real-ip") ||
+               (forwardedFor ? forwardedFor.split(",").at(-1)?.trim() : null) ||
                "unknown";
 
-    // Check rate limit
     const isAllowed = await checkRateLimit(supabase, ip);
     if (!isAllowed) {
       return new Response(
@@ -109,9 +139,8 @@ serve(async (req) => {
       );
     }
 
-    // Parse and validate request
     const rawData = await req.json();
-    
+
     let validatedData;
     try {
       validatedData = RequestSchema.parse(rawData);
@@ -125,12 +154,34 @@ serve(async (req) => {
       throw validationError;
     }
 
-    const { messages, context } = validatedData;
+    const { messages, context, sessionId } = validatedData;
 
-    // D5: Bound + dedupe product context before injecting into prompt.
+    // ---- Load the published bot configuration (admin-tunable) -------------
+    const { data: config } = await supabase
+      .from("bot_config")
+      .select("*")
+      .eq("status", "published")
+      .order("version", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const botName = config?.bot_name || "Orcka";
+    const model = config?.model || "google/gemini-3.7-flash";
+    const temperature = typeof config?.temperature === "number" ? config.temperature : 0.6;
+    const maxTokens = config?.max_tokens ?? 900;
+    const useProducts = config?.use_product_context ?? true;
+    const logTranscripts = config?.log_transcripts ?? true;
+
+    const { data: knowledge } = await supabase
+      .from("bot_knowledge")
+      .select("label, question, answer, priority")
+      .eq("enabled", true)
+      .order("priority", { ascending: true })
+      .limit(100);
+
+    // ---- Product catalog block -------------------------------------------
     let productBlock = "";
-    let truncated = false;
-    if (context?.products && context.products.length > 0) {
+    if (useProducts && context?.products && context.products.length > 0) {
       const rawSize = JSON.stringify(context.products).length;
       if (rawSize > MAX_CONTEXT_BYTES) {
         return new Response(
@@ -145,9 +196,8 @@ serve(async (req) => {
         seen.add(key);
         return true;
       });
-      truncated = deduped.length > MAX_PRODUCTS;
-      const bounded = deduped.slice(0, MAX_PRODUCTS);
-      const lines = bounded.map((p) => {
+      const truncated = deduped.length > MAX_PRODUCTS;
+      const lines = deduped.slice(0, MAX_PRODUCTS).map((p) => {
         const parts: string[] = [
           `- [${p.id}] ${p.name} (${p.category})`,
           `$${p.price.toLocaleString()}`,
@@ -163,49 +213,93 @@ serve(async (req) => {
         "\n\nCURRENT PRODUCT CATALOG (recommend ONLY from this list; refer to items by name):\n" +
         lines.join("\n") +
         (truncated ? "\n... (truncated)" : "");
-    } else if (context && context.products && context.products.length === 0) {
+    } else if (useProducts && context?.products && context.products.length === 0) {
       productBlock =
-        "\n\nCURRENT PRODUCT CATALOG: no products currently available. If asked to recommend hardware, say inventory is unavailable and redirect the conversation to services or the contact form.";
+        "\n\nCURRENT PRODUCT CATALOG: no products currently available. If asked to recommend hardware, say inventory is unavailable and redirect to services or the contact form.";
     }
+
+    // ---- Compose the system prompt ---------------------------------------
+    const sections: string[] = [];
+    sections.push(config?.system_instructions?.trim() ? config.system_instructions.trim() : DEFAULT_BASE_PROMPT);
+    sections.push(`Your name is ${botName}.`);
+    if (config?.tone && TONE_HINTS[config.tone]) sections.push(TONE_HINTS[config.tone]);
+    if (config?.response_length && LENGTH_HINTS[config.response_length]) {
+      sections.push(LENGTH_HINTS[config.response_length]);
+    }
+    if (config?.guardrails?.trim()) sections.push(`GUARDRAILS:\n${config.guardrails.trim()}`);
+    if (config?.always_cta) {
+      sections.push("Always close with a clear next step (book a call, or use the contact form).");
+    }
+    if (knowledge && knowledge.length > 0) {
+      const kb = knowledge
+        .map((k: { label: string; question: string; answer: string }) =>
+          `- ${k.label}${k.question ? ` — Q: ${k.question}` : ""}\n  A: ${k.answer}`)
+        .join("\n");
+      sections.push(`VERIFIED KNOWLEDGE (prefer these facts over your own assumptions):\n${kb}`);
+    }
+    sections.push(
+      "If a visitor looks like a qualified lead (budget, timeline or a concrete project), offer the contact form and say a human will follow up."
+    );
+    const systemPrompt = sections.join("\n\n") + productBlock;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Record this request for rate limiting
     await recordRequest(supabase, ip);
 
-    const systemPrompt = `You are DiTech AI, a helpful sales assistant for DiTech Solutions & Services — a boutique tech consultancy.
+    // ---- Transcript logging (server-side, admin-visible) -----------------
+    let logId: string | null = null;
+    if (logTranscripts && sessionId) {
+      const lastUser = [...messages].reverse().find((m) => m.role === "user");
+      const { data: existing } = await supabase
+        .from("chat_logs")
+        .select("id, message_count")
+        .eq("session_id", sessionId)
+        .maybeSingle();
 
-ABOUT DITECH:
-DiTech specializes in AI-powered automation, full-stack development, workflow orchestration, legal tech, and hardware solutions. Our tagline is "Practical AI. Reliable Automation. Tangible Results."
+      if (existing) {
+        logId = existing.id;
+        await supabase
+          .from("chat_logs")
+          .update({ message_count: messages.length, updated_at: new Date().toISOString() })
+          .eq("id", existing.id);
+      } else {
+        const { data: inserted, error: insertError } = await supabase
+          .from("chat_logs")
+          .insert({
+            session_id: sessionId,
+            first_question: lastUser?.content?.slice(0, 500) ?? null,
+            message_count: messages.length,
+          })
+          .select("id")
+          .maybeSingle();
+        if (insertError) console.error("chat_logs insert error:", insertError.message);
+        logId = inserted?.id ?? null;
+      }
 
-TARGET CLIENTS: Law firms, judges, senior advocates, international retailers, SMEs
+      if (logId && lastUser) {
+        const { error: msgError } = await supabase.from("chat_log_messages").insert({
+          log_id: logId,
+          role: "user",
+          content: lastUser.content.slice(0, 10000),
+        });
+        if (msgError) console.error("chat_log_messages insert error:", msgError.message);
+      }
+    }
 
-KEY SERVICES:
-1. AI-Powered Automation - LLMs, RAG pipelines, intelligent document processing
-2. Workflow Orchestration - n8n deployments, webhook integrations, deterministic automation
-3. Full-Stack Development - React, TypeScript, Node.js, cloud infrastructure
-4. Legal Tech Solutions - Case management, AI transcription, automated drafting, legal research
-5. E-commerce & Retail Integrations - Multi-channel inventory, automated fulfillment
-6. Hardware & Kiosk Deployments - Physical installations, IoT integrations
-7. Consulting & Training - Workshops, strategy sessions
-
-CONVERSATION GUIDELINES:
-- Be friendly, professional, and helpful
-- Answer questions about services clearly
-- Pre-qualify leads by understanding their needs
-- For detailed pricing or project discussions, encourage the contact form
-- Keep responses concise but informative (2-4 sentences typically)
-- If asked about things unrelated to DiTech, politely redirect
-
-PRODUCT RECOMMENDATION RULES:
-- When a user asks about hardware/gadgets/products, ONLY reference items from the CURRENT PRODUCT CATALOG below. Never invent SKUs or prices.
-- Describe products in plain language (what it is, standout specs, who it suits).
-- Ask 1-2 clarifying questions when needed (budget, use case, OS preference, portability, screen size).
-- Recommend 1-3 items, name them exactly as listed, mention the price, and note if out of stock.
-- If the requested category is empty in the catalog, say so and suggest an adjacent category or the contact form.${productBlock}`;
+    const body: Record<string, unknown> = {
+      model,
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
+      stream: true,
+    };
+    if (model.startsWith("openai/")) {
+      body.max_completion_tokens = maxTokens;
+    } else {
+      body.max_tokens = maxTokens;
+      body.temperature = temperature;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -213,17 +307,10 @@ PRODUCT RECOMMENDATION RULES:
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
-        stream: true,
-      }),
+      body: JSON.stringify(body),
     });
 
-    if (!response.ok) {
+    if (!response.ok || !response.body) {
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
           status: 429,
@@ -231,8 +318,14 @@ PRODUCT RECOMMENDATION RULES:
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Service temporarily unavailable. Please try again later." }), {
+        return new Response(JSON.stringify({ error: "AI credits exhausted. Please try again later or use the contact form." }), {
           status: 402,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 403) {
+        return new Response(JSON.stringify({ error: "AI access is currently disabled for this workspace." }), {
+          status: 403,
           headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
@@ -243,11 +336,49 @@ PRODUCT RECOMMENDATION RULES:
       });
     }
 
-    return new Response(response.body, {
+    // Tee the stream so we can persist the assistant reply without delaying it.
+    if (!logId) {
+      return new Response(response.body, {
+        headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream" },
+      });
+    }
+
+    const decoder = new TextDecoder();
+    let assistantText = "";
+    const capture = new TransformStream({
+      transform(chunk, controller) {
+        controller.enqueue(chunk);
+        const text = decoder.decode(chunk, { stream: true });
+        for (const line of text.split("\n")) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data: ")) continue;
+          const payload = trimmed.slice(6);
+          if (payload === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(payload);
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) assistantText += delta;
+          } catch {
+            // partial chunk — ignore
+          }
+        }
+      },
+      async flush() {
+        if (!assistantText) return;
+        const { error } = await supabase.from("chat_log_messages").insert({
+          log_id: logId,
+          role: "assistant",
+          content: assistantText.slice(0, 10000),
+        });
+        if (error) console.error("assistant log insert error:", error.message);
+      },
+    });
+
+    return new Response(response.body.pipeThrough(capture), {
       headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream" },
     });
   } catch (error) {
-    console.error("Chat error occurred");
+    console.error("Chat error occurred", error instanceof Error ? error.message : error);
     return new Response(JSON.stringify({ error: "An error occurred. Please try again." }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

@@ -59,6 +59,108 @@ export type Database = {
         }
         Relationships: []
       }
+      bot_config: {
+        Row: {
+          always_cta: boolean
+          bot_name: string
+          created_at: string
+          created_by: string | null
+          greeting: string
+          guardrails: string
+          id: string
+          log_transcripts: boolean
+          max_tokens: number
+          model: string
+          response_length: string
+          starter_prompts: Json
+          status: string
+          system_instructions: string
+          tagline: string
+          temperature: number
+          tone: string
+          updated_at: string
+          use_product_context: boolean
+          version: number
+        }
+        Insert: {
+          always_cta?: boolean
+          bot_name?: string
+          created_at?: string
+          created_by?: string | null
+          greeting?: string
+          guardrails?: string
+          id?: string
+          log_transcripts?: boolean
+          max_tokens?: number
+          model?: string
+          response_length?: string
+          starter_prompts?: Json
+          status?: string
+          system_instructions?: string
+          tagline?: string
+          temperature?: number
+          tone?: string
+          updated_at?: string
+          use_product_context?: boolean
+          version?: number
+        }
+        Update: {
+          always_cta?: boolean
+          bot_name?: string
+          created_at?: string
+          created_by?: string | null
+          greeting?: string
+          guardrails?: string
+          id?: string
+          log_transcripts?: boolean
+          max_tokens?: number
+          model?: string
+          response_length?: string
+          starter_prompts?: Json
+          status?: string
+          system_instructions?: string
+          tagline?: string
+          temperature?: number
+          tone?: string
+          updated_at?: string
+          use_product_context?: boolean
+          version?: number
+        }
+        Relationships: []
+      }
+      bot_knowledge: {
+        Row: {
+          answer: string
+          created_at: string
+          enabled: boolean
+          id: string
+          label: string
+          priority: number
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label: string
+          priority?: number
+          question?: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          priority?: number
+          question?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           created_at: string
@@ -78,6 +180,74 @@ export type Database = {
           created_at?: string
           id?: string
           messages?: Json | null
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chat_log_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          log_id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          log_id: string
+          role: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          log_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_log_messages_log_id_fkey"
+            columns: ["log_id"]
+            isOneToOne: false
+            referencedRelation: "chat_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_logs: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          first_question: string | null
+          flagged: boolean
+          id: string
+          lead: boolean
+          message_count: number
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          first_question?: string | null
+          flagged?: boolean
+          id?: string
+          lead?: boolean
+          message_count?: number
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          first_question?: string | null
+          flagged?: boolean
+          id?: string
+          lead?: boolean
+          message_count?: number
           session_id?: string
           updated_at?: string
         }
