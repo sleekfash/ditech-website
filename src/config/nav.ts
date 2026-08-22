@@ -5,6 +5,7 @@ export const primaryNav = [
   { label: "Solutions", href: "/solutions" },
   { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
+  { label: "Ask Orcka", href: "/ask" },
 ] as const;
 
 export const shopHref = "/services#shop";
