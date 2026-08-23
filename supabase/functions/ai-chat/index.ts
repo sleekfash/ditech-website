@@ -38,11 +38,25 @@ const ProductSchema = z.object({
 const MAX_PRODUCTS = 50;
 const MAX_CONTEXT_BYTES = 25_000;
 
+const PreviewConfigSchema = z.object({
+  bot_name: z.string().max(80).optional(),
+  tone: z.enum(["professional", "warm", "concise", "consultative"]).optional(),
+  response_length: z.enum(["short", "medium", "long"]).optional(),
+  system_instructions: z.string().max(20000).optional(),
+  guardrails: z.string().max(5000).optional(),
+  always_cta: z.boolean().optional(),
+  model: z.string().max(80).optional(),
+  temperature: z.number().min(0).max(2).optional(),
+  max_tokens: z.number().int().min(1).max(8000).optional(),
+  use_product_context: z.boolean().optional(),
+});
+
 const RequestSchema = z.object({
   messages: z.array(MessageSchema)
     .min(1, "At least one message is required")
     .max(50, "Too many messages in conversation"),
   sessionId: z.string().min(6).max(80).optional(),
+  previewConfig: PreviewConfigSchema.optional(),
   context: z
     .object({
       products: z.array(ProductSchema).max(200).optional(),
