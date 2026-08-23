@@ -10,7 +10,10 @@ const ALLOWED_ORIGINS = [
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get("origin") || "";
-  const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".lovable.app");
+  const isAllowedOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    origin.endsWith(".lovable.app") ||
+    origin.startsWith("http://localhost");
   return {
     "Access-Control-Allow-Origin": isAllowedOrigin ? origin : ALLOWED_ORIGINS[0],
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -38,11 +41,25 @@ const ProductSchema = z.object({
 const MAX_PRODUCTS = 50;
 const MAX_CONTEXT_BYTES = 25_000;
 
+const PreviewConfigSchema = z.object({
+  bot_name: z.string().max(80).optional(),
+  tone: z.enum(["professional", "warm", "concise", "consultative"]).optional(),
+  response_length: z.enum(["short", "medium", "long"]).optional(),
+  system_instructions: z.string().max(20000).optional(),
+  guardrails: z.string().max(5000).optional(),
+  always_cta: z.boolean().optional(),
+  model: z.string().max(80).optional(),
+  temperature: z.number().min(0).max(2).optional(),
+  max_tokens: z.number().int().min(1).max(8000).optional(),
+  use_product_context: z.boolean().optional(),
+});
+
 const RequestSchema = z.object({
   messages: z.array(MessageSchema)
     .min(1, "At least one message is required")
     .max(50, "Too many messages in conversation"),
   sessionId: z.string().min(6).max(80).optional(),
+  previewConfig: PreviewConfigSchema.optional(),
   context: z
     .object({
       products: z.array(ProductSchema).max(200).optional(),
@@ -154,23 +171,54 @@ serve(async (req) => {
       throw validationError;
     }
 
-    const { messages, context, sessionId } = validatedData;
+    const { messages, context, sessionId, previewConfig } = validatedData;
 
     // ---- Load the published bot configuration (admin-tunable) -------------
-    const { data: config } = await supabase
-      .from("bot_config")
-      .select("*")
-      .eq("status", "published")
-      .order("version", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Admin preview: a draft config supplied with the request is honored only
+    // when the caller's JWT belongs to an admin — it is never logged.
+    let isPreview = false;
+    if (previewConfig) {
+      const token = req.headers.get("authorization")?.replace("Bearer ", "") ?? "";
+      const { data: userData } = await supabase.auth.getUser(token);
+      const userId = userData?.user?.id;
+      if (!userId) {
+        return new Response(JSON.stringify({ error: "Preview requires admin sign-in" }), {
+          status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (!profile?.is_admin) {
+        return new Response(JSON.stringify({ error: "Preview requires admin sign-in" }), {
+          status: 403, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      isPreview = true;
+    }
 
-    const botName = config?.bot_name || "Orcka";
-    const model = config?.model || "google/gemini-3.7-flash";
+    let config: Record<string, unknown> | null = null;
+    if (!isPreview) {
+      const { data } = await supabase
+        .from("bot_config")
+        .select("*")
+        .eq("status", "published")
+        .order("version", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      config = data;
+    } else {
+      config = previewConfig as Record<string, unknown>;
+    }
+
+    const botName = (config?.bot_name as string) || "Orcka";
+    const model = (config?.model as string) || "google/gemini-3.7-flash";
     const temperature = typeof config?.temperature === "number" ? config.temperature : 0.6;
-    const maxTokens = config?.max_tokens ?? 900;
+    const maxTokens = (config?.max_tokens as number) ?? 900;
     const useProducts = config?.use_product_context ?? true;
-    const logTranscripts = config?.log_transcripts ?? true;
+    const logTranscripts = !isPreview && (config?.log_transcripts ?? true);
 
     const { data: knowledge } = await supabase
       .from("bot_knowledge")
@@ -220,13 +268,17 @@ serve(async (req) => {
 
     // ---- Compose the system prompt ---------------------------------------
     const sections: string[] = [];
-    sections.push(config?.system_instructions?.trim() ? config.system_instructions.trim() : DEFAULT_BASE_PROMPT);
+    const instructions = (config?.system_instructions as string) ?? "";
+    const tone = (config?.tone as string) ?? "";
+    const responseLength = (config?.response_length as string) ?? "";
+    const guardrails = (config?.guardrails as string) ?? "";
+    sections.push(instructions.trim() ? instructions.trim() : DEFAULT_BASE_PROMPT);
     sections.push(`Your name is ${botName}.`);
-    if (config?.tone && TONE_HINTS[config.tone]) sections.push(TONE_HINTS[config.tone]);
-    if (config?.response_length && LENGTH_HINTS[config.response_length]) {
-      sections.push(LENGTH_HINTS[config.response_length]);
+    if (tone && TONE_HINTS[tone]) sections.push(TONE_HINTS[tone]);
+    if (responseLength && LENGTH_HINTS[responseLength]) {
+      sections.push(LENGTH_HINTS[responseLength]);
     }
-    if (config?.guardrails?.trim()) sections.push(`GUARDRAILS:\n${config.guardrails.trim()}`);
+    if (guardrails.trim()) sections.push(`GUARDRAILS:\n${guardrails.trim()}`);
     if (config?.always_cta) {
       sections.push("Always close with a clear next step (book a call, or use the contact form).");
     }
