@@ -168,23 +168,54 @@ serve(async (req) => {
       throw validationError;
     }
 
-    const { messages, context, sessionId } = validatedData;
+    const { messages, context, sessionId, previewConfig } = validatedData;
 
     // ---- Load the published bot configuration (admin-tunable) -------------
-    const { data: config } = await supabase
-      .from("bot_config")
-      .select("*")
-      .eq("status", "published")
-      .order("version", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Admin preview: a draft config supplied with the request is honored only
+    // when the caller's JWT belongs to an admin — it is never logged.
+    let isPreview = false;
+    if (previewConfig) {
+      const token = req.headers.get("authorization")?.replace("Bearer ", "") ?? "";
+      const { data: userData } = await supabase.auth.getUser(token);
+      const userId = userData?.user?.id;
+      if (!userId) {
+        return new Response(JSON.stringify({ error: "Preview requires admin sign-in" }), {
+          status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (!profile?.is_admin) {
+        return new Response(JSON.stringify({ error: "Preview requires admin sign-in" }), {
+          status: 403, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      isPreview = true;
+    }
 
-    const botName = config?.bot_name || "Orcka";
-    const model = config?.model || "google/gemini-3.7-flash";
+    let config: Record<string, unknown> | null = null;
+    if (!isPreview) {
+      const { data } = await supabase
+        .from("bot_config")
+        .select("*")
+        .eq("status", "published")
+        .order("version", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      config = data;
+    } else {
+      config = previewConfig as Record<string, unknown>;
+    }
+
+    const botName = (config?.bot_name as string) || "Orcka";
+    const model = (config?.model as string) || "google/gemini-3.7-flash";
     const temperature = typeof config?.temperature === "number" ? config.temperature : 0.6;
-    const maxTokens = config?.max_tokens ?? 900;
+    const maxTokens = (config?.max_tokens as number) ?? 900;
     const useProducts = config?.use_product_context ?? true;
-    const logTranscripts = config?.log_transcripts ?? true;
+    const logTranscripts = !isPreview && (config?.log_transcripts ?? true);
 
     const { data: knowledge } = await supabase
       .from("bot_knowledge")
