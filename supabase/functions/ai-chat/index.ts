@@ -265,13 +265,17 @@ serve(async (req) => {
 
     // ---- Compose the system prompt ---------------------------------------
     const sections: string[] = [];
-    sections.push(config?.system_instructions?.trim() ? config.system_instructions.trim() : DEFAULT_BASE_PROMPT);
+    const instructions = (config?.system_instructions as string) ?? "";
+    const tone = (config?.tone as string) ?? "";
+    const responseLength = (config?.response_length as string) ?? "";
+    const guardrails = (config?.guardrails as string) ?? "";
+    sections.push(instructions.trim() ? instructions.trim() : DEFAULT_BASE_PROMPT);
     sections.push(`Your name is ${botName}.`);
-    if (config?.tone && TONE_HINTS[config.tone]) sections.push(TONE_HINTS[config.tone]);
-    if (config?.response_length && LENGTH_HINTS[config.response_length]) {
-      sections.push(LENGTH_HINTS[config.response_length]);
+    if (tone && TONE_HINTS[tone]) sections.push(TONE_HINTS[tone]);
+    if (responseLength && LENGTH_HINTS[responseLength]) {
+      sections.push(LENGTH_HINTS[responseLength]);
     }
-    if (config?.guardrails?.trim()) sections.push(`GUARDRAILS:\n${config.guardrails.trim()}`);
+    if (guardrails.trim()) sections.push(`GUARDRAILS:\n${guardrails.trim()}`);
     if (config?.always_cta) {
       sections.push("Always close with a clear next step (book a call, or use the contact form).");
     }
