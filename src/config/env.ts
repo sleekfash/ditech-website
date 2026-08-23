@@ -15,8 +15,10 @@ interface EnvironmentConfig {
     timeout: number;
   };
   payment: {
+    // NOTE: Only publishable keys belong here. Secret keys must live
+    // server-side (edge function secrets) — anything VITE_-prefixed is
+    // embedded in the public bundle and readable by every visitor.
     stripePublicKey?: string;
-    stripeSecretKey?: string;
     shopifyStoreName?: string;
   };
   email: {
@@ -89,7 +91,6 @@ export const loadEnvironmentConfig = (): EnvironmentConfig => {
     },
     payment: {
       stripePublicKey: import.meta.env.VITE_STRIPE_PUBLIC_KEY,
-      stripeSecretKey: import.meta.env.VITE_STRIPE_SECRET_KEY,
       shopifyStoreName: import.meta.env.VITE_SHOPIFY_STORE_NAME,
     },
     email: {
