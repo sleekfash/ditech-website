@@ -1,0 +1,4 @@
+{
+  "$comment": "Findings listed here are reviewed and accepted. The CI security scan fails only on NEW warn/error findings. Regenerate with: node scripts/security-scan.mjs --update-baseline (then fill in reasons).",
+  "accepted": []
+}
