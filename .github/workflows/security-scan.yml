@@ -1,0 +1,36 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly, Monday 03:17 UTC
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: security-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-scan:
+    name: Backend + frontend security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run security scan (fails on new warn/error findings)
+        env:
+          # Repository variable: <your backend URL>/functions/v1/security-lint
+          SECURITY_SCAN_URL: ${{ vars.SECURITY_SCAN_URL }}
+          # Repository secret: same value as the SECURITY_SCAN_TOKEN edge-function secret
+          SECURITY_SCAN_TOKEN: ${{ secrets.SECURITY_SCAN_TOKEN }}
+        run: node scripts/security-scan.mjs

@@ -347,6 +347,7 @@ export type Database = {
     Functions: {
       cleanup_rate_limits: { Args: never; Returns: undefined }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      security_lint: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never
