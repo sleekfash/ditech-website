@@ -1,1 +1,6 @@
 project_id = "fbdwcsirsoqxbvlmqujv"
+
+# The CI security scan endpoint authenticates with its own shared secret
+# (x-scan-token header), so it must not require a user JWT.
+[functions.security-lint]
+verify_jwt = false
