@@ -109,8 +109,11 @@ function deriveScanUrl() {
   if (process.env.SECURITY_SCAN_URL) return process.env.SECURITY_SCAN_URL;
   const envPath = join(ROOT, ".env");
   if (!existsSync(envPath)) return null;
-  const m = readFileSync(envPath, "utf8").match(/^VITE_SUPABASE_URL=(\S+)$/m);
-  return m ? `${m[1].replace(/\/$/, "")}/functions/v1/security-lint` : null;
+  const m = readFileSync(envPath, "utf8").match(/^VITE_SUPABASE_URL\s*=\s*(.+)$/m);
+  if (!m) return null;
+  // Strip surrounding quotes, trailing whitespace and any trailing slash.
+  const base = m[1].trim().replace(/^["']|["']$/g, "").replace(/\/$/, "");
+  return base ? `${base}/functions/v1/security-lint` : null;
 }
 
 async function remoteFindings() {
