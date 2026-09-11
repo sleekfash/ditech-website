@@ -1,71 +1,72 @@
 {
-  "$comment": "Findings listed here are reviewed and accepted. The CI security scan fails only on NEW warn/error findings. Regenerate with: node scripts/security-scan.mjs --update-baseline (then fill in reasons).",
+  "$comment": "Findings listed here have been reviewed and accepted. The CI security scan fails only on NEW warn/error findings. Regenerate with: node scripts/security-scan.mjs --update-baseline (then replace every TODO reason with a real one before committing).",
+  "reviewed": "2026-08-25",
   "accepted": [
     {
       "id": "no_insert_policy:public.chat_logs",
       "level": "warn",
       "title": "No permissive insert policy",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Intentional. Chat transcripts are written only by the ai-chat edge function using the service role, which bypasses RLS. Visitors must never insert transcript rows directly, so no client INSERT policy exists."
     },
     {
       "id": "no_insert_policy:public.chat_log_messages",
       "level": "warn",
       "title": "No permissive insert policy",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Intentional. Individual chat messages are written only by the ai-chat edge function using the service role. Direct client inserts are deliberately not allowed."
     },
     {
       "id": "anon_write_grant:public.blog_posts",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. The anon role holds a leftover table-level write grant, but RLS blocks it: the only write policies are INSERT/UPDATE/DELETE restricted to authenticated admins via is_admin(auth.uid()). Anonymous visitors can read published posts only."
     },
     {
       "id": "anon_write_grant:public.bot_config",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. All write policies require is_admin(auth.uid()) and target the authenticated role, so RLS denies every anonymous write despite the table-level grant."
     },
     {
       "id": "anon_write_grant:public.bot_knowledge",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. All write policies require is_admin(auth.uid()) and target the authenticated role, so RLS denies every anonymous write despite the table-level grant."
     },
     {
       "id": "anon_write_grant:public.chat_conversations",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. The table carries an explicit deny-all policy (USING false / WITH CHECK false), including a restrictive one, so no client role can read or write it."
     },
     {
       "id": "anon_write_grant:public.chat_log_messages",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. No INSERT or UPDATE policy exists for any client role; reads and deletes are admin-only. Writes happen exclusively through the service role in the ai-chat edge function."
     },
     {
       "id": "anon_write_grant:public.chat_logs",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. No INSERT policy exists for any client role; UPDATE, SELECT and DELETE are admin-only. Writes happen exclusively through the service role in the ai-chat edge function."
     },
     {
       "id": "anon_write_grant:public.contact_submissions",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. An explicit deny-all INSERT policy (WITH CHECK false) blocks direct submissions; the contact form writes through the validated, rate-limited contact-form edge function using the service role. Reads are admin-only. Previously reviewed and accepted as a scanner false positive."
     },
     {
       "id": "anon_write_grant:public.profiles",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. Direct profile inserts are denied outright (WITH CHECK false); rows are created by the handle_new_user trigger. Users may update only their own row, and the policy blocks changing is_admin. Anonymous writes are denied by RLS."
     },
     {
       "id": "anon_write_grant:public.rate_limits",
       "level": "warn",
       "title": "Anonymous write grant",
-      "reason": "TODO: document why this is accepted"
+      "reason": "Defense-in-depth only. A deny-all policy (USING false / WITH CHECK false) blocks all client access; the table is maintained solely by edge functions using the service role."
     }
   ]
 }
