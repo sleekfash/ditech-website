@@ -340,18 +340,6 @@ export type Database = {
         }
         Relationships: []
       }
-      scan_probe: {
-        Row: {
-          id: string
-        }
-        Insert: {
-          id?: string
-        }
-        Update: {
-          id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
