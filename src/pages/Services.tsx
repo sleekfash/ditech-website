@@ -221,6 +221,14 @@ const Services = () => {
     );
   };
 
+  // Debounce: push the typed query into the URL once typing pauses.
+  useEffect(() => {
+    if (searchDraft === searchQuery) return;
+    const t = setTimeout(() => updateParams({ q: searchDraft }, { replace: true }), 250);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchDraft]);
+
   useEffect(() => {
     if (location.hash) {
       const el = document.getElementById(location.hash.slice(1));
@@ -229,10 +237,15 @@ const Services = () => {
   }, [location.hash]);
 
   const filteredProducts = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    // Filter against the draft so results update as fast as you type.
+    const q = searchDraft.trim().toLowerCase();
     let list = products.filter((p) => {
       const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
-      const matchesSearch = !q || p.name.toLowerCase().includes(q);
+      const matchesSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
     switch (sort) {
@@ -246,11 +259,11 @@ const Services = () => {
         list = [...list].sort((a, b) => b.rating - a.rating);
         break;
       default:
-        // "featured": products.ts order (featured first by author).
+        // "featured": the display order set in Admin → Products.
         break;
     }
     return list;
-  }, [selectedCategory, searchQuery, sort]);
+  }, [products, selectedCategory, searchDraft, sort]);
 
   // D3: Share link — copy current URL with fallbacks.
   const handleShare = async () => {
