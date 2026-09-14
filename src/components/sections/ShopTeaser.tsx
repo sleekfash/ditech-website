@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { featuredProducts } from "@/config/products";
+import { useFeaturedProducts } from "@/hooks/useProducts";
+import { productImage, productSrcSet, PRODUCT_MARQUEE_SIZES } from "@/lib/productImage";
 import { shopHref } from "@/config/nav";
 
 const ShopTeaser = () => {
+  const { products: featuredProducts } = useFeaturedProducts();
+
   // Duplicate list for seamless marquee loop
   const items = [...featuredProducts, ...featuredProducts];
+
+  if (featuredProducts.length === 0) return null;
 
   return (
     <section
@@ -49,8 +54,12 @@ const ShopTeaser = () => {
             >
               <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-card border border-border">
                 <img
-                  src={p.image}
+                  src={productImage(p.image, 320)}
+                  srcSet={productSrcSet(p.image, [240, 320, 480, 640])}
+                  sizes={PRODUCT_MARQUEE_SIZES}
                   alt={p.name}
+                  width={320}
+                  height={240}
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
