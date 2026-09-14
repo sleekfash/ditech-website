@@ -33,7 +33,9 @@ import {
 } from "@/components/ui/select";
 import Layout from "@/components/layout/Layout";
 import servicesBg from "@/assets/services-bg.jpg";
-import { products, productCategories } from "@/config/products";
+import { productCategories } from "@/config/products";
+import { useProducts } from "@/hooks/useProducts";
+import { productImage, productSrcSet, PRODUCT_GRID_SIZES } from "@/lib/productImage";
 
 const services = [
   {
@@ -176,10 +178,21 @@ const Services = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
 
+  // Cached catalogue — fetched once, reused across pages and back-navigation.
+  const { products, isLoading: productsLoading } = useProducts();
+
   // Read + coerce (invalid → default; no toast).
   const selectedCategory = coerceCategory(searchParams.get("category"));
   const searchQuery = coerceQ(searchParams.get("q"));
   const sort = coerceSort(searchParams.get("sort"));
+
+  // Typing stays instant: the input is local state, the URL catches up after a pause.
+  const [searchDraft, setSearchDraft] = useState(searchQuery);
+  useEffect(() => {
+    setSearchDraft(searchQuery);
+    // Only re-sync when the URL changes from outside (back/forward, shared link).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   // Serialization: only non-default params appear in URL.
   const updateParams = (
