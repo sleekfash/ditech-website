@@ -33,7 +33,9 @@ import {
 } from "@/components/ui/select";
 import Layout from "@/components/layout/Layout";
 import servicesBg from "@/assets/services-bg.jpg";
-import { products, productCategories } from "@/config/products";
+import { productCategories } from "@/config/products";
+import { useProducts } from "@/hooks/useProducts";
+import { productImage, productSrcSet, PRODUCT_GRID_SIZES } from "@/lib/productImage";
 
 const services = [
   {
@@ -176,10 +178,21 @@ const Services = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
 
+  // Cached catalogue — fetched once, reused across pages and back-navigation.
+  const { products, isLoading: productsLoading } = useProducts();
+
   // Read + coerce (invalid → default; no toast).
   const selectedCategory = coerceCategory(searchParams.get("category"));
   const searchQuery = coerceQ(searchParams.get("q"));
   const sort = coerceSort(searchParams.get("sort"));
+
+  // Typing stays instant: the input is local state, the URL catches up after a pause.
+  const [searchDraft, setSearchDraft] = useState(searchQuery);
+  useEffect(() => {
+    setSearchDraft(searchQuery);
+    // Only re-sync when the URL changes from outside (back/forward, shared link).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   // Serialization: only non-default params appear in URL.
   const updateParams = (
@@ -208,6 +221,14 @@ const Services = () => {
     );
   };
 
+  // Debounce: push the typed query into the URL once typing pauses.
+  useEffect(() => {
+    if (searchDraft === searchQuery) return;
+    const t = setTimeout(() => updateParams({ q: searchDraft }, { replace: true }), 250);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchDraft]);
+
   useEffect(() => {
     if (location.hash) {
       const el = document.getElementById(location.hash.slice(1));
@@ -216,10 +237,15 @@ const Services = () => {
   }, [location.hash]);
 
   const filteredProducts = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    // Filter against the draft so results update as fast as you type.
+    const q = searchDraft.trim().toLowerCase();
     let list = products.filter((p) => {
       const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
-      const matchesSearch = !q || p.name.toLowerCase().includes(q);
+      const matchesSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
     switch (sort) {
@@ -233,11 +259,11 @@ const Services = () => {
         list = [...list].sort((a, b) => b.rating - a.rating);
         break;
       default:
-        // "featured": products.ts order (featured first by author).
+        // "featured": the display order set in Admin → Products.
         break;
     }
     return list;
-  }, [selectedCategory, searchQuery, sort]);
+  }, [products, selectedCategory, searchDraft, sort]);
 
   // D3: Share link — copy current URL with fallbacks.
   const handleShare = async () => {
@@ -425,8 +451,8 @@ const Services = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <Input
                 placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => updateParams({ q: e.target.value.slice(0, MAX_Q_LENGTH) }, { replace: true })}
+                value={searchDraft}
+                onChange={(e) => setSearchDraft(e.target.value.slice(0, MAX_Q_LENGTH))}
                 className="pl-10 rounded-full"
                 aria-label="Search products"
                 maxLength={MAX_Q_LENGTH}
@@ -477,6 +503,24 @@ const Services = () => {
             </div>
           </div>
 
+          {productsLoading && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" aria-hidden="true">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden border border-border bg-card">
+                  <div className="aspect-[4/3] bg-muted animate-pulse" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-3 w-20 bg-muted animate-pulse rounded" />
+                    <div className="h-5 w-3/4 bg-muted animate-pulse rounded" />
+                    <div className="h-5 w-1/3 bg-muted animate-pulse rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="sr-only" role="status" aria-live="polite">
+            {productsLoading ? "Loading products" : `${filteredProducts.length} products`}
+          </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product, i) => (
               <motion.div
@@ -489,14 +533,18 @@ const Services = () => {
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img
-                    src={product.image}
+                    src={productImage(product.image, 480)}
+                    srcSet={productSrcSet(product.image)}
+                    sizes={PRODUCT_GRID_SIZES}
                     alt={product.name}
                     width={800}
                     height={600}
-                    loading="lazy"
+                    loading={i < 4 ? "eager" : "lazy"}
+                    fetchPriority={i < 2 ? "high" : "auto"}
                     decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+
                   {product.badge && (
                     <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-background/85 backdrop-blur text-[10px] tracking-[0.18em] uppercase font-medium text-foreground">
                       {product.badge}
@@ -544,13 +592,16 @@ const Services = () => {
             ))}
           </div>
 
-          {filteredProducts.length === 0 && (
+          {!productsLoading && filteredProducts.length === 0 && (
             <div className="text-center py-16">
               <p className="text-muted-foreground text-lg">No products match your filters.</p>
               <Button
                 variant="outline"
                 className="mt-4 rounded-full"
-                onClick={() => updateParams({ category: "All", q: "", sort: "featured" })}
+                onClick={() => {
+                  setSearchDraft("");
+                  updateParams({ category: "All", q: "", sort: "featured" });
+                }}
               >
                 Clear filters
               </Button>
