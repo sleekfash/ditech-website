@@ -503,6 +503,24 @@ const Services = () => {
             </div>
           </div>
 
+          {productsLoading && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" aria-hidden="true">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden border border-border bg-card">
+                  <div className="aspect-[4/3] bg-muted animate-pulse" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-3 w-20 bg-muted animate-pulse rounded" />
+                    <div className="h-5 w-3/4 bg-muted animate-pulse rounded" />
+                    <div className="h-5 w-1/3 bg-muted animate-pulse rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="sr-only" role="status" aria-live="polite">
+            {productsLoading ? "Loading products" : `${filteredProducts.length} products`}
+          </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product, i) => (
               <motion.div
@@ -515,14 +533,18 @@ const Services = () => {
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img
-                    src={product.image}
+                    src={productImage(product.image, 480)}
+                    srcSet={productSrcSet(product.image)}
+                    sizes={PRODUCT_GRID_SIZES}
                     alt={product.name}
                     width={800}
                     height={600}
-                    loading="lazy"
+                    loading={i < 4 ? "eager" : "lazy"}
+                    fetchPriority={i < 2 ? "high" : "auto"}
                     decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+
                   {product.badge && (
                     <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-background/85 backdrop-blur text-[10px] tracking-[0.18em] uppercase font-medium text-foreground">
                       {product.badge}
