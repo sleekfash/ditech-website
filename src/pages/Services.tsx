@@ -592,13 +592,16 @@ const Services = () => {
             ))}
           </div>
 
-          {filteredProducts.length === 0 && (
+          {!productsLoading && filteredProducts.length === 0 && (
             <div className="text-center py-16">
               <p className="text-muted-foreground text-lg">No products match your filters.</p>
               <Button
                 variant="outline"
                 className="mt-4 rounded-full"
-                onClick={() => updateParams({ category: "All", q: "", sort: "featured" })}
+                onClick={() => {
+                  setSearchDraft("");
+                  updateParams({ category: "All", q: "", sort: "featured" });
+                }}
               >
                 Clear filters
               </Button>
