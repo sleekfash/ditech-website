@@ -296,9 +296,11 @@ const Admin = () => {
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
           {[
             { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+            { id: "products", label: "Products", icon: ShoppingBag },
             { id: "posts", label: "Blog Posts", icon: FileText },
             { id: "contacts", label: "Contact Submissions", icon: MessageSquare },
             { id: "orcka", label: "Orcka AI", icon: Bot },
+            { id: "account", label: "Account", icon: UserCog },
           ].map((tab) => (
             <Button
               key={tab.id}
