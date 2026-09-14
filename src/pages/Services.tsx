@@ -451,8 +451,8 @@ const Services = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <Input
                 placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => updateParams({ q: e.target.value.slice(0, MAX_Q_LENGTH) }, { replace: true })}
+                value={searchDraft}
+                onChange={(e) => setSearchDraft(e.target.value.slice(0, MAX_Q_LENGTH))}
                 className="pl-10 rounded-full"
                 aria-label="Search products"
                 maxLength={MAX_Q_LENGTH}
