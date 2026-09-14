@@ -12,8 +12,10 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Plus, Edit, Trash2, LogOut, FileText, Users, MessageSquare, LayoutDashboard, Eye, Bot } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, FileText, Users, MessageSquare, LayoutDashboard, Eye, Bot, ShoppingBag, UserCog } from "lucide-react";
 import OrckaAdmin from "@/components/admin/OrckaAdmin";
+import ProductsAdmin from "@/components/admin/ProductsAdmin";
+import AccountPanel from "@/components/admin/AccountPanel";
 import ditechLogo from "@/assets/ditech-logo.jpeg";
 import type { User, Session } from "@supabase/supabase-js";
 
