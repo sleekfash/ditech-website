@@ -1,7 +1,7 @@
 # Roadmap
 
-## In progress
-- [ ] SECURITY_SCAN_TOKEN: check if it already exists in the remixed project; retain and reuse the same value if present, otherwise generate a new one.
+## Done
+- [x] SECURITY_SCAN_TOKEN: already exists in the remixed project — retained unchanged; scan endpoint verified live (401 without token). GitHub repo secret must hold the same value for CI.
 
 ## Pending (from prior session, verify on remix)
 - [ ] Admin dashboard: Products and Account tab panels — confirm they render when tabs are clicked.
