@@ -1,11 +1,10 @@
 /**
- * Checkout & E-commerce Type Definitions
- * Based on 2025 best practices for e-commerce database schema
+ * Checkout & e-commerce types.
+ * Product ids are the catalogue UUIDs stored in the database.
  */
 
 export type CartItem = {
-  id: string;
-  product_id: number;
+  product_id: string;
   name: string;
   price: number;
   quantity: number;
@@ -18,12 +17,24 @@ export type Cart = {
   currency: string;
 };
 
+export type OrderStatus =
+  | "pending"
+  | "paid"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
 export type Order = {
   id: string;
-  user_id: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  total: number;
+  reference: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  notes: string | null;
   currency: string;
+  total: number;
+  status: OrderStatus;
   created_at: string;
   updated_at: string;
 };
@@ -31,46 +42,17 @@ export type Order = {
 export type OrderItem = {
   id: string;
   order_id: string;
-  product_id: number;
+  product_id: string | null;
+  product_name: string;
+  unit_price: number;
   quantity: number;
-  price_at_purchase: number;
 };
 
-export type Customer = {
-  id: string;
+export type CustomerDetails = {
+  name: string;
   email: string;
-  first_name: string;
-  last_name: string;
-  phone?: string;
-  created_at: string;
-  updated_at: string;
+  phone: string;
+  notes?: string;
 };
 
-export type ShippingAddress = {
-  id: string;
-  customer_id: string;
-  street_address: string;
-  city: string;
-  state: string;
-  postal_code: string;
-  country: string;
-  is_default: boolean;
-};
-
-export type CheckoutStep = 'cart' | 'shipping' | 'payment' | 'confirmation';
-
-export type CheckoutState = {
-  step: CheckoutStep;
-  cart: Cart;
-  customer: Partial<Customer>;
-  shippingAddress?: ShippingAddress;
-  paymentMethod?: 'stripe' | 'paypal' | 'card';
-};
-
-export type PaymentIntent = {
-  id: string;
-  client_secret: string;
-  amount: number;
-  currency: string;
-  status: 'pending' | 'succeeded' | 'failed';
-};
+export type CheckoutStep = "cart" | "details" | "confirmation";

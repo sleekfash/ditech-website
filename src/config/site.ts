@@ -26,6 +26,14 @@ export const site = {
     github: "#",
     facebook: "#",
   },
+  commerce: {
+    currency: "NGN",
+    currencySymbol: "₦",
+    locale: "en-NG",
+    // Shown at checkout so customers know what happens after they order.
+    fulfilmentNote:
+      "We confirm stock and delivery by phone or email within one business day, then share payment details.",
+  },
   legal: {
     privacyHref: "/privacy",
     termsHref: "/terms",
