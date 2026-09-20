@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { KeyRound } from "lucide-react";
+import UsersPanel from "@/components/admin/UsersPanel";
 
 const AccountPanel = ({ email }: { email?: string | null }) => {
   const { toast } = useToast();
@@ -54,7 +55,7 @@ const AccountPanel = ({ email }: { email?: string | null }) => {
   };
 
   return (
-    <div className="max-w-xl space-y-6">
+    <div className="max-w-4xl space-y-6">
       <div>
         <h2 className="font-display text-2xl font-bold">Account</h2>
         <p className="text-sm text-muted-foreground mt-1">{email}</p>
@@ -111,6 +112,8 @@ const AccountPanel = ({ email }: { email?: string | null }) => {
           </form>
         </CardContent>
       </Card>
+
+      <UsersPanel />
     </div>
   );
 };

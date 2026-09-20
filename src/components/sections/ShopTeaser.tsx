@@ -80,7 +80,7 @@ const ShopTeaser = () => {
                   </div>
                 </div>
                 <div className="serif text-lg text-[hsl(var(--sea))] whitespace-nowrap">
-                  ${p.price.toLocaleString()}
+                  {formatPrice(p.price)}
                 </div>
               </div>
             </Link>

@@ -573,18 +573,32 @@ const Services = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-baseline gap-2">
-                      <span className="serif text-xl text-[hsl(var(--sea))]">${product.price.toLocaleString()}</span>
+                      <span className="serif text-xl text-[hsl(var(--sea))]">{formatPrice(product.price)}</span>
                       {product.originalPrice && (
                         <span className="text-sm text-muted-foreground line-through">
-                          ${product.originalPrice.toLocaleString()}
+                          {formatPrice(product.originalPrice)}
                         </span>
                       )}
                     </div>
-                    <Button asChild size="sm" className="rounded-full bg-[hsl(var(--ink))] text-[hsl(var(--background))] hover:bg-[hsl(var(--sea))]" disabled={!product.inStock}>
-                      <Link to="/contact">
-                        <ShoppingCart className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                        Enquire
-                      </Link>
+                    <Button
+                      size="sm"
+                      className="rounded-full bg-[hsl(var(--ink))] text-[hsl(var(--background))] hover:bg-[hsl(var(--sea))]"
+                      disabled={!product.inStock}
+                      onClick={() => {
+                        addItem({
+                          product_id: String(product.id),
+                          name: product.name,
+                          price: product.price,
+                          image: product.image,
+                        });
+                        toast({
+                          title: "Added to cart",
+                          description: `${product.name} — ${formatPrice(product.price)}`,
+                        });
+                      }}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-1.5" aria-hidden="true" />
+                      Add to cart
                     </Button>
                   </div>
                 </div>

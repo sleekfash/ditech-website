@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { lazy, Suspense } from "react";
+import { CartProvider } from "@/hooks/useCart";
 import Home from "./pages/Home";
 
 // Below-the-fold routes are code-split for faster initial paint
@@ -17,6 +18,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Ask = lazy(() => import("./pages/Ask"));
+const Checkout = lazy(() => import("./pages/Checkout"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -38,6 +40,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CartProvider>
         <BrowserRouter>
           <Suspense fallback={<RouteFallback />}>
             <Routes>
@@ -52,10 +55,13 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/ask" element={<Ask />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/cart" element={<Navigate to="/checkout" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
+        </CartProvider>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
