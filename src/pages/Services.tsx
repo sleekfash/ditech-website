@@ -182,6 +182,7 @@ const Services = () => {
 
   // Cached catalogue — fetched once, reused across pages and back-navigation.
   const { products, isLoading: productsLoading } = useProducts();
+  const { addItem } = useCart();
 
   // Read + coerce (invalid → default; no toast).
   const selectedCategory = coerceCategory(searchParams.get("category"));
