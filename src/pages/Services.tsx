@@ -593,8 +593,7 @@ const Services = () => {
                           price: product.price,
                           image: product.image,
                         });
-                        toast({
-                          title: "Added to cart",
+                        toast.success("Added to cart", {
                           description: `${product.name} — ${formatPrice(product.price)}`,
                         });
                       }}
