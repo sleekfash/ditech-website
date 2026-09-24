@@ -36,6 +36,8 @@ import servicesBg from "@/assets/services-bg.jpg";
 import { productCategories } from "@/config/products";
 import { useProducts } from "@/hooks/useProducts";
 import { productImage, productSrcSet, PRODUCT_GRID_SIZES } from "@/lib/productImage";
+import { formatPrice } from "@/lib/currency";
+import { useCart } from "@/hooks/useCart";
 
 const services = [
   {
