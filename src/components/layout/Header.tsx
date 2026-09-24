@@ -1,11 +1,33 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Anchor } from "lucide-react";
+import { Menu, X, Anchor, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { primaryNav } from "@/config/nav";
 import { site } from "@/config/site";
+import { useCart } from "@/hooks/useCart";
+
+const CartButton = () => {
+  const { count } = useCart();
+  return (
+    <Button
+      asChild
+      variant="ghost"
+      size="icon"
+      className="relative min-h-11 min-w-11"
+    >
+      <Link to="/checkout" aria-label={`Cart, ${count} item${count === 1 ? "" : "s"}`}>
+        <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+        {count > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[hsl(var(--brass))] text-[hsl(var(--ink))] text-[10px] font-semibold flex items-center justify-center">
+            {count}
+          </span>
+        )}
+      </Link>
+    </Button>
+  );
+};
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -79,6 +101,7 @@ const Header = () => {
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
+              <CartButton />
               <ThemeToggle />
               <Button
                 asChild
@@ -89,6 +112,7 @@ const Header = () => {
             </div>
 
             <div className="flex lg:hidden items-center gap-2">
+              <CartButton />
               <ThemeToggle />
               <Button
                 variant="ghost"

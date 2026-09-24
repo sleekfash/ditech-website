@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { productsQueryKey } from "@/hooks/useProducts";
 import { productImage } from "@/lib/productImage";
 import { productCategories } from "@/config/products";
+import { formatPrice } from "@/lib/currency";
 import { Plus, Edit, Trash2, ArrowUp, ArrowDown, Package } from "lucide-react";
 
 interface ProductRow {
@@ -281,7 +282,7 @@ const ProductsAdmin = () => {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{row.category}</TableCell>
                     <TableCell className="whitespace-nowrap">
-                      ${Number(row.price).toLocaleString()}
+                      {formatPrice(row.price)}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
                       <div className="flex flex-wrap gap-1">
@@ -419,7 +420,7 @@ const ProductsAdmin = () => {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="p-price">Price (USD)</Label>
+                <Label htmlFor="p-price">Price (₦)</Label>
                 <Input
                   id="p-price"
                   type="number"

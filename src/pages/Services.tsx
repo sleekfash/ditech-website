@@ -36,6 +36,8 @@ import servicesBg from "@/assets/services-bg.jpg";
 import { productCategories } from "@/config/products";
 import { useProducts } from "@/hooks/useProducts";
 import { productImage, productSrcSet, PRODUCT_GRID_SIZES } from "@/lib/productImage";
+import { formatPrice } from "@/lib/currency";
+import { useCart } from "@/hooks/useCart";
 
 const services = [
   {
@@ -180,6 +182,7 @@ const Services = () => {
 
   // Cached catalogue — fetched once, reused across pages and back-navigation.
   const { products, isLoading: productsLoading } = useProducts();
+  const { addItem } = useCart();
 
   // Read + coerce (invalid → default; no toast).
   const selectedCategory = coerceCategory(searchParams.get("category"));
@@ -591,8 +594,7 @@ const Services = () => {
                           price: product.price,
                           image: product.image,
                         });
-                        toast({
-                          title: "Added to cart",
+                        toast.success("Added to cart", {
                           description: `${product.name} — ${formatPrice(product.price)}`,
                         });
                       }}

@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useFeaturedProducts } from "@/hooks/useProducts";
 import { productImage, productSrcSet, PRODUCT_MARQUEE_SIZES } from "@/lib/productImage";
 import { shopHref } from "@/config/nav";
+import { formatPrice } from "@/lib/currency";
 
 const ShopTeaser = () => {
   const { products: featuredProducts } = useFeaturedProducts();
