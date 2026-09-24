@@ -101,6 +101,7 @@ const Header = () => {
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
+              <CartButton />
               <ThemeToggle />
               <Button
                 asChild
@@ -111,6 +112,7 @@ const Header = () => {
             </div>
 
             <div className="flex lg:hidden items-center gap-2">
+              <CartButton />
               <ThemeToggle />
               <Button
                 variant="ghost"
