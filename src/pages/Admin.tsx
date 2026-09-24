@@ -12,7 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Plus, Edit, Trash2, LogOut, FileText, Users, MessageSquare, LayoutDashboard, Eye, Bot, ShoppingBag, UserCog } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, FileText, Users, MessageSquare, LayoutDashboard, Eye, Bot, ShoppingBag, UserCog, ClipboardList } from "lucide-react";
+import OrdersAdmin from "@/components/admin/OrdersAdmin";
 import OrckaAdmin from "@/components/admin/OrckaAdmin";
 import ProductsAdmin from "@/components/admin/ProductsAdmin";
 import AccountPanel from "@/components/admin/AccountPanel";
@@ -297,6 +298,7 @@ const Admin = () => {
           {[
             { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
             { id: "products", label: "Products", icon: ShoppingBag },
+            { id: "orders", label: "Orders", icon: ClipboardList },
             { id: "posts", label: "Blog Posts", icon: FileText },
             { id: "contacts", label: "Contact Submissions", icon: MessageSquare },
             { id: "orcka", label: "Orcka AI", icon: Bot },
@@ -552,6 +554,15 @@ const Admin = () => {
             </Card>
           </div>
         )}
+
+        {/* Products */}
+        {activeTab === "products" && <ProductsAdmin />}
+
+        {/* Orders */}
+        {activeTab === "orders" && <OrdersAdmin />}
+
+        {/* Account & users */}
+        {activeTab === "account" && <AccountPanel email={user?.email} />}
 
         {/* Orcka AI control dashboard */}
         {activeTab === "orcka" && (
