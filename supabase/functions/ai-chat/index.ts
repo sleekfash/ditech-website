@@ -22,7 +22,7 @@ function getCorsHeaders(req: Request) {
 }
 
 const MessageSchema = z.object({
-  role: z.enum(["user", "assistant", "system"]),
+  role: z.enum(["user", "assistant"]),
   content: z.string().max(10000, "Message content too long"),
 });
 
