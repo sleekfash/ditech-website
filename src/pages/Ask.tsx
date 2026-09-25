@@ -27,11 +27,21 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { useOrckaChat } from "@/hooks/useOrckaChat";
 import { bot } from "@/config/bot";
+import { supabase } from "@/integrations/supabase/client";
 
 const Ask = () => {
   const { messages, status, publicConfig, send, stop, reset, regenerate } =
     useOrckaChat();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setSignedIn(Boolean(session))
+    );
+    supabase.auth.getSession().then(({ data }) => setSignedIn(Boolean(data.session)));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const botName = publicConfig?.bot_name || bot.name;
   const greeting = publicConfig?.greeting || bot.greeting;
@@ -208,6 +218,15 @@ const Ask = () => {
 
         {/* Composer */}
         <div className="mx-auto w-full max-w-3xl pb-4 pt-2">
+          {signedIn === false && (
+            <p className="mb-2 text-center text-sm text-muted-foreground">
+              Please{" "}
+              <Link to="/auth" className="underline underline-offset-2 hover:text-foreground">
+                sign in
+              </Link>{" "}
+              to chat with {botName}.
+            </p>
+          )}
           <PromptInput
             onSubmit={handleSubmit}
             className="rounded-3xl border-border/80 bg-card shadow-[0_10px_40px_-18px_hsl(var(--ink)/0.25)]"
