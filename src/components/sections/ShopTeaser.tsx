@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 import { useFeaturedProducts } from "@/hooks/useProducts";
 import { productImage, productSrcSet, PRODUCT_MARQUEE_SIZES } from "@/lib/productImage";
 import { shopHref } from "@/config/nav";
 import { formatPrice } from "@/lib/currency";
+import { useCart } from "@/hooks/useCart";
 
 const ShopTeaser = () => {
   const { products: featuredProducts } = useFeaturedProducts();
+  const { addItem } = useCart();
 
   // Duplicate list for seamless marquee loop
   const items = [...featuredProducts, ...featuredProducts];
@@ -69,6 +72,21 @@ const ShopTeaser = () => {
                   <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-background/85 backdrop-blur text-[10px] tracking-[0.18em] uppercase font-medium text-foreground">
                     {p.badge}
                   </span>
+                )}
+                {p.inStock && (
+                  <button
+                    type="button"
+                    aria-label={`Add ${p.name} to cart`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addItem({ product_id: String(p.id), name: p.name, price: p.price, image: p.image });
+                      toast.success("Added to cart", { description: p.name });
+                    }}
+                    className="absolute bottom-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+                  </button>
                 )}
               </div>
               <div className="flex items-baseline justify-between gap-3 mt-4">

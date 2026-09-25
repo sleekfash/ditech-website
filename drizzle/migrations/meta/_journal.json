@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790342952441,
+      "tag": "0000_restore_new_user_profile_trigger",
+      "breakpoints": true
+    }
+  ]
+}

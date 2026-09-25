@@ -1,9 +1,12 @@
 # Roadmap
 
 ## Done
-- [x] SECURITY_SCAN_TOKEN: already exists in the remixed project — retained unchanged; scan endpoint verified live (401 without token). GitHub repo secret must hold the same value for CI.
+- [x] New SECURITY_SCAN_TOKEN generated and saved (value not viewable).
+- [x] Admin Products, Orders and Account tabs render real data.
+- [x] Checkout flow verified end to end (test order removed).
+- [x] Ask Orcka requires sign-in; system-role messages rejected.
+- [x] Homepage product strip has add-to-cart.
+- [x] New accounts get a profile record automatically.
 
-## Pending (from prior session, verify on remix)
-- [ ] Admin dashboard: Products and Account tab panels — confirm they render when tabs are clicked.
-- [ ] Run build/typecheck after any changes.
-- [ ] Orcka admin walkthrough (publish bot settings, flag transcript, live chat test) — needs admin sign-in.
+## Waiting on user
+- [ ] GitHub CI: set repo secret SECURITY_SCAN_TOKEN (choose a new value and update the backend secret to match) and variable SECURITY_SCAN_URL.
