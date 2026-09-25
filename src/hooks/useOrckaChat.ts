@@ -130,10 +130,11 @@ export function useOrckaChat() {
               Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
-              messages: nextMessages.map((m) => ({
-                role: m.role,
-                content: m.content,
-              })),
+              // Only user turns are sent — the server rejects caller-supplied
+              // assistant roles to prevent forged conversation context.
+              messages: nextMessages
+                .filter((m) => m.role === "user")
+                .map((m) => ({ role: "user" as const, content: m.content })),
               sessionId,
               context: { products: productContext },
             }),
