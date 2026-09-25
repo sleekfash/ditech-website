@@ -21,8 +21,10 @@ function getCorsHeaders(req: Request) {
   };
 }
 
+// Callers may only submit user messages. Assistant turns are never accepted
+// from the request — they would let a caller forge conversational context.
 const MessageSchema = z.object({
-  role: z.enum(["user", "assistant"]),
+  role: z.literal("user"),
   content: z.string().max(10000, "Message content too long"),
 });
 
