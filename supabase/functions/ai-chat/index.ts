@@ -143,6 +143,17 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Require a signed-in user before any paid AI call.
+    const authToken = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+    const { data: authData, error: authError } = authToken
+      ? await supabase.auth.getUser(authToken)
+      : { data: null, error: new Error("missing") };
+    if (authError || !authData?.user) {
+      return new Response(JSON.stringify({ error: "Please sign in to chat." }), {
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
     const forwardedFor = req.headers.get("x-forwarded-for");
     const ip = req.headers.get("x-real-ip") ||
                (forwardedFor ? forwardedFor.split(",").at(-1)?.trim() : null) ||
