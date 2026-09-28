@@ -305,7 +305,30 @@ serve(async (req) => {
     sections.push(
       "If a visitor looks like a qualified lead (budget, timeline or a concrete project), offer the contact form and say a human will follow up."
     );
+    sections.push(
+      "GROUNDING RULES: Answer ONLY from the DiTech information above, the VERIFIED KNOWLEDGE and the CURRENT PRODUCT CATALOG — this is the content published on the DiTech website. Never invent services, clients, prices, timelines or products. If the answer isn't covered, say so plainly and suggest the contact form."
+    );
     const systemPrompt = sections.join("\n\n") + productBlock;
+
+    // ---- Saved answers first: a strong match skips the AI call ------------
+    const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
+    const tokenize = (s: string) =>
+      new Set(s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((w) => w.length > 2));
+    const qTokens = tokenize(lastUserText);
+    let savedAnswer: string | null = null;
+    if (!isPreview && knowledge && qTokens.size > 0) {
+      let best = 0;
+      for (const k of knowledge as { question: string; answer: string }[]) {
+        if (!k.question) continue;
+        const kTokens = tokenize(k.question);
+        if (kTokens.size === 0) continue;
+        let overlap = 0;
+        for (const t of kTokens) if (qTokens.has(t)) overlap++;
+        const score = overlap / Math.max(kTokens.size, qTokens.size);
+        if (score > best) { best = score; if (score >= 0.6) savedAnswer = k.answer; }
+      }
+    }
+
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -352,6 +375,19 @@ serve(async (req) => {
         });
         if (msgError) console.error("chat_log_messages insert error:", msgError.message);
       }
+    }
+
+    if (savedAnswer) {
+      if (logId) {
+        await supabase.from("chat_log_messages").insert({
+          log_id: logId, role: "assistant", content: savedAnswer.slice(0, 10000),
+        });
+      }
+      const sse =
+        `data: ${JSON.stringify({ choices: [{ delta: { content: savedAnswer } }] })}\n\ndata: [DONE]\n\n`;
+      return new Response(sse, {
+        headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream", "X-Orcka-Source": "saved" },
+      });
     }
 
     const body: Record<string, unknown> = {
