@@ -21,6 +21,12 @@ import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/layout/Layout";
 import SectionScrollSpy from "@/components/SectionScrollSpy";
 import legalTechImg from "@/assets/legal-tech.jpg";
+import caseLegal from "@/assets/case-legal.jpg";
+import caseRetail from "@/assets/case-retail.jpg";
+import caseFinance from "@/assets/case-finance.jpg";
+import caseLogistics from "@/assets/case-logistics.jpg";
+import projectCloudArchive from "@/assets/project-cloud-archive.jpg";
+import projectAutomation from "@/assets/project-automation.jpg";
 
 const breadcrumbLd = {
   "@context": "https://schema.org",
@@ -125,7 +131,7 @@ const projects = [
     title: "LegalFirst Case Management Platform",
     category: "Legal Tech",
     description: "Built a comprehensive AI-powered case management system for a mid-sized law firm, resulting in 40% efficiency improvement.",
-    image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop",
+    image: caseLegal,
     technologies: ["React", "Node.js", "PostgreSQL", "OpenAI"],
     results: ["40% efficiency increase", "60% faster document processing", "99% client satisfaction"],
     year: "2025",
@@ -135,7 +141,7 @@ const projects = [
     title: "RetailPro E-commerce Platform",
     category: "E-commerce",
     description: "Developed a scalable e-commerce platform with AI-powered recommendations and automated inventory management.",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop",
+    image: caseRetail,
     technologies: ["Next.js", "Stripe", "Supabase", "TensorFlow"],
     results: ["60% sales increase", "30% cart abandonment reduction", "24/7 automated support"],
     year: "2024",
@@ -145,7 +151,7 @@ const projects = [
     title: "HealthConnect Patient Portal",
     category: "Healthcare",
     description: "Created a secure patient portal with appointment scheduling, telemedicine integration, and medical records access.",
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop",
+    image: projectCloudArchive,
     technologies: ["React", "Python", "AWS", "HIPAA Compliant"],
     results: ["50% fewer no-shows", "Improved patient engagement", "Streamlined communications"],
     year: "2024",
@@ -155,7 +161,7 @@ const projects = [
     title: "FinanceFlow Automation Suite",
     category: "Finance",
     description: "Implemented workflow automation for a financial services company, automating reporting and compliance tasks.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
+    image: caseFinance,
     technologies: ["Python", "Power Automate", "SQL Server", "Azure"],
     results: ["80% time saved on reports", "Zero compliance issues", "Real-time analytics"],
     year: "2024",
@@ -165,7 +171,7 @@ const projects = [
     title: "EduLearn Virtual Classroom",
     category: "Education",
     description: "Built an interactive virtual classroom platform with AI tutoring, progress tracking, and collaborative tools.",
-    image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=400&fit=crop",
+    image: projectAutomation,
     technologies: ["React", "WebRTC", "Node.js", "MongoDB"],
     results: ["10,000+ active students", "95% completion rate", "AI-personalized learning"],
     year: "2023",
@@ -175,7 +181,7 @@ const projects = [
     title: "LogiTrack Supply Chain System",
     category: "Logistics",
     description: "Developed a real-time supply chain tracking system with predictive analytics and automated alerts.",
-    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&h=400&fit=crop",
+    image: caseLogistics,
     technologies: ["React", "Python", "IoT", "Machine Learning"],
     results: ["25% cost reduction", "Real-time visibility", "Predictive maintenance"],
     year: "2023",
@@ -247,7 +253,7 @@ const Solutions = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="relative">
-              <img src={legalTechImg} alt="Legal Technology Solutions" className="rounded-2xl shadow-2xl" />
+              <img src={legalTechImg} alt="Legal Technology Solutions" width={1200} height={800} className="rounded-2xl shadow-2xl w-full object-cover" />
               <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border border-border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">

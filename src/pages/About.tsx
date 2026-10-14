@@ -26,6 +26,17 @@ const breadcrumbLd = {
 
 import aboutWorkspaceTech from "@/assets/about-workspace-tech.jpg";
 import aboutStrategy from "@/assets/about-strategy.jpg";
+import teamCeo from "@/assets/team-ceo.jpg";
+import teamLeadDev from "@/assets/team-lead-dev.jpg";
+import teamAiLead from "@/assets/team-ai-lead.jpg";
+import teamDesignLead from "@/assets/team-design-lead.jpg";
+
+const team = [
+  { role: "Founder & Principal", focus: "Strategy, client stewardship and delivery.", image: teamCeo },
+  { role: "Lead Engineer", focus: "Full-stack builds, integrations and cloud.", image: teamLeadDev },
+  { role: "AI Practice Lead", focus: "Language models, retrieval and automation.", image: teamAiLead },
+  { role: "Design Lead", focus: "Interfaces, storefronts and brand systems.", image: teamDesignLead },
+];
 
 const values = [
   {
@@ -299,6 +310,44 @@ const About = () => {
                 {/* Spacer for alternating layout */}
                 <div className="hidden md:block flex-1" />
               </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Principals */}
+      <section className="section-padding">
+        <div className="container-custom">
+          <div className="max-w-2xl mb-14">
+            <span className="kicker">The principals</span>
+            <h2 className="serif text-4xl md:text-5xl mt-4 brass-rule">Senior hands, every engagement.</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {team.map((m, i) => (
+              <motion.figure
+                key={m.role}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="group"
+              >
+                <div className="overflow-hidden rounded-3xl aspect-[4/5] bg-muted">
+                  <img
+                    src={m.image}
+                    alt={`${m.role} at DiTech`}
+                    width={800}
+                    height={1000}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
+                <figcaption className="mt-5 border-t border-[hsl(var(--brass))]/40 pt-4">
+                  <div className="serif text-xl">{m.role}</div>
+                  <p className="text-sm text-muted-foreground mt-1">{m.focus}</p>
+                </figcaption>
+              </motion.figure>
             ))}
           </div>
         </div>
