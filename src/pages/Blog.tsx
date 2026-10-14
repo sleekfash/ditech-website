@@ -9,6 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
+import blogAiLegal from "@/assets/blog-ai-legal.jpg";
+import blogWorkflow from "@/assets/blog-workflow.jpg";
+import blogLegalTech from "@/assets/blog-legal-tech.jpg";
+import blogTranscription from "@/assets/blog-transcription.jpg";
+import caseRetail from "@/assets/case-retail.jpg";
+import projectCloudArchive from "@/assets/project-cloud-archive.jpg";
 
 const breadcrumbLd = {
   "@context": "https://schema.org",
@@ -37,7 +43,7 @@ const fallbackPosts = [
     excerpt: "Explore how artificial intelligence is transforming the legal industry, from document review to case prediction.",
     slug: "future-of-ai-legal-practice",
     category: "Legal Tech",
-    featured_image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop",
+    featured_image: blogAiLegal,
     read_time: 8,
     created_at: "2025-01-10",
   },
@@ -47,7 +53,7 @@ const fallbackPosts = [
     excerpt: "Key considerations and best practices for developing e-commerce solutions that grow with your business.",
     slug: "building-scalable-ecommerce",
     category: "Development",
-    featured_image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop",
+    featured_image: caseRetail,
     read_time: 6,
     created_at: "2025-01-08",
   },
@@ -57,7 +63,7 @@ const fallbackPosts = [
     excerpt: "Learn how to identify automation opportunities and implement efficient workflows in your organization.",
     slug: "workflow-automation-guide",
     category: "Automation",
-    featured_image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
+    featured_image: blogWorkflow,
     read_time: 10,
     created_at: "2025-01-05",
   },
@@ -67,7 +73,7 @@ const fallbackPosts = [
     excerpt: "Essential security measures every business should implement to protect their digital assets.",
     slug: "cybersecurity-best-practices-2025",
     category: "Security",
-    featured_image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop",
+    featured_image: blogLegalTech,
     read_time: 7,
     created_at: "2025-01-03",
   },
@@ -77,7 +83,7 @@ const fallbackPosts = [
     excerpt: "A comprehensive look at different approaches to migrating your infrastructure to the cloud.",
     slug: "cloud-migration-strategies",
     category: "Cloud",
-    featured_image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop",
+    featured_image: projectCloudArchive,
     read_time: 9,
     created_at: "2025-01-01",
   },
@@ -87,7 +93,7 @@ const fallbackPosts = [
     excerpt: "How chatbots and AI assistants are revolutionizing customer support and improving satisfaction.",
     slug: "ai-powered-customer-service",
     category: "AI",
-    featured_image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=600&h=400&fit=crop",
+    featured_image: blogTranscription,
     read_time: 5,
     created_at: "2024-12-28",
   },
@@ -256,7 +262,7 @@ const Blog = () => {
                 <Card className="h-full card-hover overflow-hidden bg-card border-border">
                   <div className="aspect-video overflow-hidden">
                     <img
-                      src={post.featured_image || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop"}
+                      src={post.featured_image || projectCloudArchive}
                       alt={post.title}
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
