@@ -218,7 +218,7 @@ const Blog = () => {
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="aspect-video md:aspect-auto overflow-hidden">
                     <img
-                      src={filteredPosts[0].featured_image || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop"}
+                      src={filteredPosts[0].featured_image || projectCloudArchive}
                       alt={filteredPosts[0].title}
                       className="w-full h-full object-cover"
                     />

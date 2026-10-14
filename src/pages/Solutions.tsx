@@ -253,7 +253,7 @@ const Solutions = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="relative">
-              <img src={legalTechImg} alt="Legal Technology Solutions" className="rounded-2xl shadow-2xl" />
+              <img src={legalTechImg} alt="Legal Technology Solutions" width={1200} height={800} className="rounded-2xl shadow-2xl w-full object-cover" />
               <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border border-border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
