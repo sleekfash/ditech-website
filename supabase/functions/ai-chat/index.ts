@@ -339,12 +339,15 @@ serve(async (req) => {
 
     // ---- Transcript logging (server-side, admin-visible) -----------------
     let logId: string | null = null;
-    if (logTranscripts && sessionId) {
+    // Namespace the client-supplied session id with the verified caller's id,
+    // so a caller can only ever reach chat logs they created themselves.
+    const ownedSessionId = sessionId ? `${authData.user.id}:${sessionId}` : null;
+    if (logTranscripts && ownedSessionId) {
       const lastUser = [...messages].reverse().find((m) => m.role === "user");
       const { data: existing } = await supabase
         .from("chat_logs")
         .select("id, message_count")
-        .eq("session_id", sessionId)
+        .eq("session_id", ownedSessionId)
         .maybeSingle();
 
       if (existing) {
@@ -357,7 +360,7 @@ serve(async (req) => {
         const { data: inserted, error: insertError } = await supabase
           .from("chat_logs")
           .insert({
-            session_id: sessionId,
+            session_id: ownedSessionId,
             first_question: lastUser?.content?.slice(0, 500) ?? null,
             message_count: messages.length,
           })
