@@ -101,6 +101,22 @@ const fallbackPosts = [
 
 const categories = ["All", "Legal Tech", "Development", "Automation", "Security", "Cloud", "AI"];
 
+// Descriptive alt text keyed by image, so the same photo reads the same everywhere.
+const imageAlts: Record<string, string> = {
+  [blogAiLegal]: "Laptop in a modern law library showing a legal research brief with an attorney profile.",
+  [caseRetail]: "Boutique retail counter with a card terminal and a laptop showing online sales analytics.",
+  [blogWorkflow]: "Glass office wall displaying connected workflow dashboards, task stages and performance charts.",
+  [blogLegalTech]: "Team meeting in a boardroom in front of a wall screen of security and network dashboards.",
+  [projectCloudArchive]: "Illustration of documents flowing into a secure cloud with a search bar, linked to the systems below.",
+  [blogTranscription]: "Studio microphone in front of a monitor showing a live audio waveform being transcribed to text.",
+};
+const altFor = (post: { featured_image: string; title: string; category: string }) =>
+  imageAlts[post.featured_image || projectCloudArchive] ??
+  `Cover image for the ${post.category} article “${post.title}”`;
+
+const IMG_W = 1280;
+const IMG_H = 800;
+
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>(fallbackPosts);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -216,10 +232,15 @@ const Blog = () => {
             >
               <Card className="overflow-hidden bg-card border-border">
                 <div className="grid md:grid-cols-2 gap-0">
-                  <div className="aspect-video md:aspect-auto overflow-hidden">
+                  <div className="aspect-[16/10] md:aspect-auto md:min-h-[22rem] overflow-hidden bg-muted">
                     <img
                       src={filteredPosts[0].featured_image || projectCloudArchive}
-                      alt={filteredPosts[0].title}
+                      alt={altFor(filteredPosts[0])}
+                      width={IMG_W}
+                      height={IMG_H}
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      decoding="async"
+                      fetchPriority="high"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -260,10 +281,15 @@ const Blog = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="h-full card-hover overflow-hidden bg-card border-border">
-                  <div className="aspect-video overflow-hidden">
+                  <div className="aspect-[16/10] overflow-hidden bg-muted">
                     <img
                       src={post.featured_image || projectCloudArchive}
-                      alt={post.title}
+                      alt={altFor(post)}
+                      width={IMG_W}
+                      height={IMG_H}
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
                   </div>
