@@ -38,6 +38,46 @@ import { useProducts } from "@/hooks/useProducts";
 import { productImage, productSrcSet, PRODUCT_GRID_SIZES } from "@/lib/productImage";
 import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/hooks/useCart";
+import practiceAi from "@/assets/practice-ai.jpg";
+import practiceWorkflow from "@/assets/practice-workflow.jpg";
+import practiceDev from "@/assets/practice-dev.jpg";
+import practiceEcommerce from "@/assets/practice-ecommerce.jpg";
+import practiceCloud from "@/assets/practice-cloud.jpg";
+import practiceData from "@/assets/practice-data.jpg";
+
+// Visual preview per practice — 16:10 editorial stills, 1280×800 source.
+const practicePreviews: Record<string, { src: string; alt: string; caption: string }> = {
+  "ai-automation": {
+    src: practiceAi,
+    alt: "Laptop showing an AI document-processing screen: a services agreement with highlighted clauses beside the extracted client, fee and date fields ready to confirm.",
+    caption: "Contracts read, key fields extracted, ready for review.",
+  },
+  workflow: {
+    src: practiceWorkflow,
+    alt: "Desktop monitor displaying a customer-onboarding automation: form submitted, email verified, then a branch that creates the account or sends a reminder.",
+    caption: "One trigger, every follow-up handled automatically.",
+  },
+  development: {
+    src: practiceDev,
+    alt: "An engineer typing beside a laptop and phone showing the same bespoke website, with the application's source code open on a monitor behind.",
+    caption: "Bespoke builds that work on every screen.",
+  },
+  ecommerce: {
+    src: practiceEcommerce,
+    alt: "Tablet showing an online storefront with laptops and headphones, next to a phone on the checkout screen and a branded shipping box.",
+    caption: "Storefront to checkout to doorstep.",
+  },
+  cloud: {
+    src: practiceCloud,
+    alt: "Laptop showing a cloud infrastructure dashboard with a global map of regions, healthy serverless functions, databases and storage, 99.99% uptime and monthly cost.",
+    caption: "Global infrastructure, monitored and cost-controlled.",
+  },
+  data: {
+    src: practiceData,
+    alt: "Monitor with an executive dashboard showing total revenue, gross margin, active customers, a revenue trend and customers by region, plus a tablet of key insights.",
+    caption: "The numbers that matter, on one screen.",
+  },
+};
 
 const services = [
   {
@@ -392,21 +432,42 @@ const Services = () => {
                   </Button>
                 </div>
 
-                <Card className={`lg:col-span-6 bg-card border-border rounded-3xl ${index % 2 === 1 ? "lg:order-1" : ""}`}>
-                  <CardHeader>
-                    <CardTitle className="serif text-xl">Key capabilities</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {service.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <CheckCircle className="h-5 w-5 text-[hsl(var(--sea))] flex-shrink-0 mt-0.5" aria-hidden="true" />
-                          <span className="text-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+                <div className={`lg:col-span-6 space-y-6 ${index % 2 === 1 ? "lg:order-1" : ""}`}>
+                  {practicePreviews[service.id] && (
+                    <figure className="group">
+                      <div className="overflow-hidden rounded-3xl aspect-[16/10] bg-muted border border-border shadow-[0_30px_60px_-30px_hsl(var(--ink)/0.35)]">
+                        <img
+                          src={practicePreviews[service.id].src}
+                          alt={practicePreviews[service.id].alt}
+                          width={1280}
+                          height={800}
+                          sizes="(min-width: 1024px) 50vw, 100vw"
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        />
+                      </div>
+                      <figcaption className="mt-3 text-sm text-muted-foreground border-l-2 border-[hsl(var(--brass))] pl-3">
+                        {practicePreviews[service.id].caption}
+                      </figcaption>
+                    </figure>
+                  )}
+                  <Card className="bg-card border-border rounded-3xl">
+                    <CardHeader>
+                      <CardTitle className="serif text-xl">Key capabilities</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="grid sm:grid-cols-2 gap-3">
+                        {service.features.map((feature, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <CheckCircle className="h-5 w-5 text-[hsl(var(--sea))] flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <span className="text-foreground">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
               </motion.div>
             ))}
           </div>

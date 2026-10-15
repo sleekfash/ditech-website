@@ -188,6 +188,16 @@ const projects = [
   },
 ];
 
+// Descriptive alt text per case study (describes what the photo shows + its context).
+const projectAlts: Record<number, string> = {
+  1: "Case-management dashboard on a desktop monitor in a sunlit coastal office, listing active cases, a case timeline and recent documents.",
+  2: "Boutique retail counter with a card terminal and a laptop showing sales analytics, folded garments on brass-trimmed shelves behind.",
+  3: "Illustration of a secure cloud archive: documents flowing into a cloud with a search bar, connected to the systems below.",
+  4: "Finance professional reviewing an automated reporting dashboard of charts and key figures at a desk overlooking the sea.",
+  5: "Dark automation console mapping an AI hub connected to learning tools, tasks and student progress panels.",
+  6: "Boardroom wall screen showing supply-chain intelligence: a global shipping map, delivery forecasts and cost trends.",
+};
+
 const categories = ["All", "Legal Tech", "E-commerce", "Healthcare", "Finance", "Education", "Logistics"];
 
 const portfolioStats = [
@@ -253,7 +263,7 @@ const Solutions = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="relative">
-              <img src={legalTechImg} alt="Legal Technology Solutions" width={1200} height={800} className="rounded-2xl shadow-2xl w-full object-cover" />
+              <img src={legalTechImg} alt="Scales of justice drawn with circuit-board lines, symbolising technology built for legal practice." width={1024} height={1024} sizes="(min-width: 1024px) 50vw, 100vw" loading="lazy" decoding="async" className="rounded-2xl shadow-2xl w-full aspect-square object-cover" />
               <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border border-border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
@@ -391,15 +401,16 @@ const Solutions = () => {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card className="h-full card-hover overflow-hidden bg-card border-border group flex flex-col">
-                    <div className="relative aspect-video overflow-hidden">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                       <img
                         src={project.image}
-                        alt={`${project.title} — ${project.category} case study`}
+                        alt={projectAlts[project.id] ?? `${project.title} — ${project.category} case study`}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                         decoding="async"
-                        width={600}
-                        height={400}
+                        width={1280}
+                        height={800}
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                       />
                       <div className="absolute top-4 left-4">
                         <Badge className="bg-primary text-primary-foreground">{project.category}</Badge>
