@@ -32,10 +32,10 @@ import teamAiLead from "@/assets/team-ai-lead.jpg";
 import teamDesignLead from "@/assets/team-design-lead.jpg";
 
 const team = [
-  { role: "Founder & Principal", focus: "Strategy, client stewardship and delivery.", image: teamCeo },
-  { role: "Lead Engineer", focus: "Full-stack builds, integrations and cloud.", image: teamLeadDev },
-  { role: "AI Practice Lead", focus: "Language models, retrieval and automation.", image: teamAiLead },
-  { role: "Design Lead", focus: "Interfaces, storefronts and brand systems.", image: teamDesignLead },
+  { role: "Founder & Principal", focus: "Strategy, client stewardship and delivery.", image: teamCeo, alt: "Portrait of diTech's Founder and Principal, smiling in a navy blazer and open-collar white shirt in the studio office." },
+  { role: "Lead Engineer", focus: "Full-stack builds, integrations and cloud.", image: teamLeadDev, alt: "Portrait of diTech's Lead Engineer in a teal blouse, standing in front of a bank of monitors in the engineering room." },
+  { role: "AI Practice Lead", focus: "Language models, retrieval and automation.", image: teamAiLead, alt: "Portrait of diTech's AI Practice Lead wearing glasses and a white shirt, with data dashboards on screens behind." },
+  { role: "Design Lead", focus: "Interfaces, storefronts and brand systems.", image: teamDesignLead, alt: "Portrait of diTech's Design Lead in a dark blazer, beside a wall pinned with interface sketches." },
 ];
 
 const values = [
@@ -335,12 +335,13 @@ const About = () => {
                 <div className="overflow-hidden rounded-3xl aspect-[4/5] bg-muted">
                   <img
                     src={m.image}
-                    alt={`${m.role} at DiTech`}
-                    width={800}
-                    height={1000}
+                    alt={m.alt}
+                    width={1024}
+                    height={1024}
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 <figcaption className="mt-5 border-t border-[hsl(var(--brass))]/40 pt-4">
