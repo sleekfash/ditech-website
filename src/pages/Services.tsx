@@ -44,6 +44,7 @@ import practiceDev from "@/assets/practice-dev.jpg";
 import practiceEcommerce from "@/assets/practice-ecommerce.jpg";
 import practiceCloud from "@/assets/practice-cloud.jpg";
 import practiceData from "@/assets/practice-data.jpg";
+import developerAiConsultant from "@/assets/developer-ai-consultant.jpeg.asset.json";
 
 // Visual preview per practice — 16:10 editorial stills, 1280×800 source.
 const practicePreviews: Record<string, { src: string; alt: string; caption: string }> = {
@@ -449,6 +450,24 @@ const Services = () => {
                       </div>
                       <figcaption className="mt-3 text-sm text-muted-foreground border-l-2 border-[hsl(var(--brass))] pl-3">
                         {practicePreviews[service.id].caption}
+                      </figcaption>
+                    </figure>
+                  )}
+                  {service.id === "development" && (
+                    <figure className="flex items-center gap-5 border-y border-border/70 py-5">
+                      <img
+                        src={developerAiConsultant.url}
+                        alt="Black-and-white portrait of the Developer / AI Consultant wearing round glasses."
+                        width={787}
+                        height={1080}
+                        sizes="96px"
+                        loading="lazy"
+                        decoding="async"
+                        className="h-28 w-24 shrink-0 rounded-lg object-cover object-top"
+                      />
+                      <figcaption>
+                        <span className="kicker">Specialist profile</span>
+                        <h3 className="serif text-xl mt-1">Developer / AI Consultant</h3>
                       </figcaption>
                     </figure>
                   )}
