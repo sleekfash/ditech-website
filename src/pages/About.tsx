@@ -26,6 +26,7 @@ const breadcrumbLd = {
 
 import aboutWorkspaceTech from "@/assets/about-workspace-tech.jpg";
 import aboutStrategy from "@/assets/about-strategy.jpg";
+import solviaConcept from "@/assets/solvia-concept.jpeg.asset.json";
 import teamCeo from "@/assets/team-ceo.jpg";
 import teamLeadDev from "@/assets/team-lead-dev.jpg";
 import teamAiLead from "@/assets/team-ai-lead.jpg";
@@ -312,6 +313,43 @@ const About = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Proposed brand concept */}
+      <section className="section-padding bg-[hsl(var(--surface))]">
+        <div className="container-custom grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="lg:col-span-5"
+          >
+            <span className="kicker">A proposed brand concept</span>
+            <h2 className="serif text-3xl md:text-5xl mt-4 mb-6 brass-rule">
+              Solvia, a name under consideration.
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Solvia is being explored as a possible name for a customer-facing technology brand. DiTech remains the current company brand; no rebrand has been announced. The name and tagline require trademark, company-register, domain and social-handle checks before adoption.
+            </p>
+          </motion.div>
+          <motion.figure
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="lg:col-span-7 overflow-hidden rounded-2xl border border-border bg-[hsl(var(--ink))] aspect-[16/9]"
+          >
+            <img
+              src={solviaConcept.url}
+              alt="Proposed Solvia logo with the tagline ‘Tech That Solves’."
+              width={1024}
+              height={1024}
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </motion.figure>
         </div>
       </section>
 
