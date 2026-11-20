@@ -2,6 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Apply the saved mode before paint to avoid a bright flash on night visits.
+      try {
+        const saved = localStorage.getItem("ditech-ui-theme");
+        const dark = saved === "dark" || (saved === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.add(dark ? "dark" : "light");
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      } catch { /* Day mode is the default when storage is unavailable. */ }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
     <title>DiTech — AI Automation & Legal Tech Solutions</title>
