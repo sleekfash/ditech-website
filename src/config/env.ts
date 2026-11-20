@@ -22,7 +22,6 @@ interface EnvironmentConfig {
     shopifyStoreName?: string;
   };
   email: {
-    apiKey?: string;
     fromAddress?: string;
   };
   features: {
@@ -94,7 +93,6 @@ export const loadEnvironmentConfig = (): EnvironmentConfig => {
       shopifyStoreName: import.meta.env.VITE_SHOPIFY_STORE_NAME,
     },
     email: {
-      apiKey: import.meta.env.VITE_EMAIL_SERVICE_API_KEY,
       fromAddress: import.meta.env.VITE_EMAIL_FROM,
     },
     features: {

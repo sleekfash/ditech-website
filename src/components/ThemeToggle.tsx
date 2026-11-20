@@ -3,18 +3,22 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const isNight = resolvedTheme === "dark";
+  const label = isNight ? "Switch to day mode" : "Switch to night mode";
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="rounded-full"
+      type="button"
+      variant="outline"
+      onClick={() => setTheme(isNight ? "light" : "dark")}
+      className="min-h-11 gap-2 rounded-full px-3"
+      aria-label={label}
+      aria-pressed={isNight}
+      title={label}
     >
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
+      {isNight ? <Moon className="h-4 w-4" aria-hidden="true" /> : <Sun className="h-4 w-4" aria-hidden="true" />}
+      <span className="text-xs font-medium">{isNight ? "Night" : "Day"}</span>
     </Button>
   );
 }
