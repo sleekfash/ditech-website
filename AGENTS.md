@@ -1,2 +1,2 @@
 ## Architecture decisions
-- Keep the public Workflow Advisor in its own Supabase Edge Function and homepage module, separate from authenticated Ask Orcka, so visitor access and protections remain isolated.
+- Keep the Workflow Advisor in its own Edge Function and homepage module, separate from Ask Orcka; require verified accounts and enforce its daily account quota and IP throttle server-side.

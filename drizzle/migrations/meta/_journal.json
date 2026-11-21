@@ -15,6 +15,13 @@
       "when": 1795010967672,
       "tag": "0001_add_workflow_advisor_ip_limit",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795228494685,
+      "tag": "0002_workflow_advisor_daily_quota",
+      "breakpoints": true
     }
   ]
 }

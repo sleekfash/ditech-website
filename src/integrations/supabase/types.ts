@@ -493,12 +493,34 @@ export type Database = {
         }
         Relationships: []
       }
+      workflow_advisor_daily_usage: {
+        Row: {
+          account_hash: string
+          request_count: number
+          usage_day: string
+        }
+        Insert: {
+          account_hash: string
+          request_count?: number
+          usage_day: string
+        }
+        Update: {
+          account_hash?: string
+          request_count?: number
+          usage_day?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      consume_workflow_advisor_daily_limit: {
+        Args: { p_account_hash: string }
+        Returns: boolean
+      }
       consume_workflow_advisor_rate_limit: {
         Args: { p_identifier: string }
         Returns: boolean

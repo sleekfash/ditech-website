@@ -1,5 +1,10 @@
 # Roadmap
 
+## In progress — Visitor accounts for Workflow Advisor
+- [ ] Add email/password signup and sign-in with email confirmation, plus Google sign-in.
+- [ ] Require confirmed accounts and enforce a three-recommendation UTC-day quota per account alongside the existing IP limit.
+- [ ] Verify visitor registration, sign-in, and advisor access end to end.
+
 ## Waiting on available AI credits
 - [ ] Verify a live Workflow Advisor recommendation through AI Gateway; the workspace ran out of credits before the real request could be tested.
 
