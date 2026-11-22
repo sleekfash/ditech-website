@@ -1,9 +1,14 @@
 import { z } from "npm:zod@4.6.7";
 
 export const MAX_REQUESTS_PER_MINUTE = 5;
+export const MAX_REQUESTS_PER_UTC_DAY = 3;
 
 export function isWithinWorkflowAdvisorRateLimit(requestCount: number) {
   return Number.isInteger(requestCount) && requestCount >= 0 && requestCount < MAX_REQUESTS_PER_MINUTE;
+}
+
+export function isWithinWorkflowAdvisorDailyLimit(requestCount: number) {
+  return Number.isInteger(requestCount) && requestCount >= 0 && requestCount < MAX_REQUESTS_PER_UTC_DAY;
 }
 
 export const WorkflowAdvisorSchema = z.object({

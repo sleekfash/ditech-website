@@ -128,6 +128,9 @@ Deno.serve(async (req) => {
     if (authError || !authData?.user) {
       return jsonResponse(req, 401, { error: "Please sign in to use the workflow advisor." });
     }
+    if (!authData.user.email_confirmed_at && !authData.user.confirmed_at) {
+      return jsonResponse(req, 403, { error: "Please confirm your email before requesting recommendations." });
+    }
 
     const identifier = await hashIdentifier(requestIp(req));
     const { data: allowed, error: limitError } = await service.rpc("consume_workflow_advisor_rate_limit", {
@@ -139,6 +142,18 @@ Deno.serve(async (req) => {
     }
     if (!allowed) {
       return jsonResponse(req, 429, { error: "Please wait a minute before requesting another workflow review." });
+    }
+
+    const accountHash = await hashIdentifier(`workflow-advisor-account:${authData.user.id}`);
+    const { data: dailyAllowed, error: dailyLimitError } = await service.rpc("consume_workflow_advisor_daily_limit", {
+      p_account_hash: accountHash,
+    });
+    if (dailyLimitError) {
+      console.error("Workflow advisor daily limit unavailable:", dailyLimitError.code);
+      return jsonResponse(req, 503, { error: "The advisor is temporarily unavailable. Please try again shortly." });
+    }
+    if (!dailyAllowed) {
+      return jsonResponse(req, 429, { error: "You've reached today's limit of three workflow recommendations. Try again after the UTC daily reset." });
     }
 
     const { industry, currentTools, workflow } = parsed.data;

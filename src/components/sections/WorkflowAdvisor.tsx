@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import type { User } from "@supabase/supabase-js";
 import { ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageResponse } from "@/components/ai-elements/message";
 import { supabase } from "@/integrations/supabase/client";
+
+type AccountStatus = "checking" | "signed-out" | "unverified" | "verified";
+
+const advisorDestination = "/#workflow-advisor";
+const signupHref = `/auth?mode=signup&next=${encodeURIComponent(advisorDestination)}`;
+const signinHref = `/auth?next=${encodeURIComponent(advisorDestination)}`;
+
+function isVerifiedUser(user: User | null | undefined) {
+  return Boolean(user?.email_confirmed_at || user?.confirmed_at);
+}
 
 const workflowExamples = [
   {
@@ -36,7 +47,29 @@ const WorkflowAdvisor = () => {
   const [recommendation, setRecommendation] = useState("");
   const [error, setError] = useState("");
   const [signInRequired, setSignInRequired] = useState(false);
+  const [accountStatus, setAccountStatus] = useState<AccountStatus>("checking");
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const updateAccountStatus = (user: User | null | undefined) => {
+      if (!active) return;
+      setAccountStatus(user ? (isVerifiedUser(user) ? "verified" : "unverified") : "signed-out");
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      updateAccountStatus(session?.user);
+    });
+    void supabase.auth.getUser().then(({ data, error: userError }) => {
+      if (!userError) updateAccountStatus(data.user);
+      else updateAccountStatus(null);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const loadExample = (example: (typeof workflowExamples)[number]) => {
     setIndustry(example.industry);
@@ -54,6 +87,14 @@ const WorkflowAdvisor = () => {
     setSignInRequired(false);
     setRecommendation("");
     try {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !isVerifiedUser(authData.user)) {
+        setAccountStatus(authData.user ? "unverified" : "signed-out");
+        setSignInRequired(true);
+        setError(authData.user ? "Confirm your email before requesting recommendations." : "Create a verified account or sign in before requesting recommendations.");
+        return;
+      }
+
       const { data, error: invokeError } = await supabase.functions.invoke("workflow-advisor", {
         body: { industry, currentTools, workflow },
       });
@@ -61,8 +102,8 @@ const WorkflowAdvisor = () => {
         let message = "Recommendations are temporarily unavailable. Please try again.";
         if ("context" in invokeError && invokeError.context instanceof Response) {
           const body = await invokeError.context.clone().json().catch(() => null);
-          if (invokeError.context.status === 401) {
-            message = "Please sign in to use the workflow advisor.";
+          if (invokeError.context.status === 401 || (invokeError.context.status === 403 && typeof body?.error === "string" && body.error.toLowerCase().includes("confirm your email"))) {
+            message = typeof body?.error === "string" ? body.error : "Please sign in to use the workflow advisor.";
             setSignInRequired(true);
           } else if (typeof body?.error === "string") message = body.error;
         }
@@ -82,18 +123,27 @@ const WorkflowAdvisor = () => {
   };
 
   return (
-    <section className="section-padding border-y border-border/60 bg-[hsl(var(--surface))]">
+    <section id="workflow-advisor" className="section-padding border-y border-border/60 bg-[hsl(var(--surface))]">
       <div className="container-custom max-w-5xl">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div>
             <span className="kicker inline-flex items-center gap-2"><Sparkles className="h-4 w-4" aria-hidden="true" /> Workflow advisor</span>
             <h2 className="serif mt-4 text-4xl md:text-5xl brass-rule">Find the quiet work your systems can take on.</h2>
             <p className="mt-6 max-w-lg leading-relaxed text-muted-foreground">
-              Describe one process that takes too much time. Sign in to receive practical automation opportunities and a sensible place to start.
+              Describe one process that takes too much time. A verified account is required before recommendations can be requested.
             </p>
-            <Button asChild variant="link" className="mt-2 h-auto px-0">
-              <Link to="/auth">Sign in to use the advisor <ArrowRight className="h-4 w-4" /></Link>
-            </Button>
+            {accountStatus === "verified" ? (
+              <p className="mt-5 text-sm text-muted-foreground">Your account can request up to three workflow reviews per UTC day.</p>
+            ) : (
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Button asChild size="sm">
+                  <Link to={signupHref}>Create account <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <Link to={signinHref}>Sign in</Link>
+                </Button>
+              </div>
+            )}
             <p className="mt-5 text-sm text-muted-foreground">
               Please leave out passwords, personal records, and confidential customer information.
             </p>
@@ -147,9 +197,15 @@ const WorkflowAdvisor = () => {
           <div className="mt-12 border-t border-border pt-8" aria-live="polite" aria-busy={busy}>
             {busy && <p className="text-sm text-muted-foreground">Considering the handoffs, repetitive steps, and tools in your process…</p>}
             {error && (
-              <p role="alert" className="text-sm text-destructive">
-                {error}{signInRequired && <> <Link to="/auth" className="underline underline-offset-2">Sign in</Link>.</>}
-              </p>
+              <div role="alert" className="space-y-3 text-sm text-destructive">
+                <p>{error}</p>
+                {signInRequired && (
+                  <div className="flex flex-wrap gap-3 text-foreground">
+                    <Button asChild size="sm"><Link to={signupHref}>Create account</Link></Button>
+                    <Button asChild size="sm" variant="outline"><Link to={signinHref}>Sign in</Link></Button>
+                  </div>
+                )}
+              </div>
             )}
             {recommendation && (
               <div className="max-w-3xl">
