@@ -6,11 +6,6 @@ import { Input } from "@/components/ui/input";
 import { MessageResponse } from "@/components/ai-elements/message";
 import { supabase } from "@/integrations/supabase/client";
 import { bot } from "@/config/bot";
-import { products } from "@/config/products";
-
-const productContext = products.map((p) => ({
-  id: p.id, name: p.name, category: p.category, price: p.price, inStock: p.inStock,
-}));
 
 // One-off question box — no history kept.
 const HomeAsk = () => {
@@ -39,7 +34,6 @@ const HomeAsk = () => {
         },
         body: JSON.stringify({
           messages: [{ role: "user", content: q }],
-          context: { products: productContext },
         }),
       });
       if (!res.ok || !res.body) {

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { products } from "@/config/products";
 import { bot, type PublicBotConfig } from "@/config/bot";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -11,18 +10,6 @@ export interface ChatMessage {
 }
 
 export type ChatStatus = "ready" | "submitted" | "streaming" | "error";
-
-const productContext = products.map((p) => ({
-  id: p.id,
-  name: p.name,
-  category: p.category,
-  price: p.price,
-  inStock: p.inStock,
-  rating: p.rating,
-  reviews: p.reviews,
-  badge: p.badge ?? undefined,
-  originalPrice: p.originalPrice ?? undefined,
-}));
 
 interface StoredConversation {
   sessionId: string;
@@ -136,7 +123,6 @@ export function useOrckaChat() {
                 .filter((m) => m.role === "user")
                 .map((m) => ({ role: "user" as const, content: m.content })),
               sessionId,
-              context: { products: productContext },
             }),
             signal: abortRef.current.signal,
           }
