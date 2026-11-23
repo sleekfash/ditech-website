@@ -1,6 +1,7 @@
 # Security Scan CI
 
-The build fails if a **new** warn- or error-level security finding appears.
+The Security Scan check fails if a **new** warn- or error-level security finding appears.
+The separate Frontend validation check runs static checks and the Vite build; it does not certify the backend.
 
 ## How it works
 
@@ -27,7 +28,7 @@ The build fails if a **new** warn- or error-level security finding appears.
 | GitHub repo → Settings → Secrets → Actions | `SECURITY_SCAN_TOKEN` | Same value as the `SECURITY_SCAN_TOKEN` backend secret |
 | GitHub repo → Settings → Variables → Actions | `SECURITY_SCAN_URL` | `<your backend URL>/functions/v1/security-lint` (backend URL = the `VITE_SUPABASE_URL` value in `.env`) |
 
-The backend secret was generated automatically and its value is never shown.
+The backend and GitHub must have the same scan token configured. Its current presence and value are not established by this repository.
 To sync CI, set your own random value (48+ chars) in **both** places:
 update the `SECURITY_SCAN_TOKEN` backend secret here, then create the GitHub
 secret with the same value.

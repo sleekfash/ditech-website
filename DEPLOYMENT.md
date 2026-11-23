@@ -1,341 +1,76 @@
-# DiTech Deployment Guide: cPanel & E-commerce Integration
+# DiTech deployment
 
-## Part 1: Static Deployment to cPanel (PHP/Subfolder Hosting)
+## Current architecture
 
-### Overview
-DiTech is a **static SPA** (Single Page Application) built with Vite + React. It requires:
-- No Node.js runtime on server
-- Static file hosting
-- `.htaccess` rewrite rules for SPA routing
+The frontend is a React/TypeScript SPA built by Vite. Supabase supplies authentication,
+data, and Edge Functions. The repository includes cart, checkout and order submission;
+checkout records a pending order and is not an integrated card-payment checkout.
+Ask Orcka and the separate Workflow Advisor require sign-in in the current code.
 
-### Build & Deploy Steps
+## Vercel preview workflow
 
-#### 1. Local Build
-```bash
-# Install dependencies
-npm i
+1. Import `sleekfash/ditech-website` into the intended Vercel team. Use the Vite
+   preset, repository root, Node 22, `npm ci --ignore-scripts`, `npm run build`, and
+   output directory `dist`. The same build settings and SPA rewrites are in `vercel.json`.
+2. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and optionally
+   `VITE_SUPABASE_PROJECT_ID` in Preview and Production. These are browser-visible
+   configuration. Never use a service-role/secret API key or an AI/email provider
+   secret in a VITE variable. Prefer a separate Supabase project for staging;
+   previews using the existing project read and write the existing data.
+3. Push a feature branch and open a pull request. Vercel's Git integration creates
+   a preview. The `Frontend validation` workflow checks the build and static
+   frontend security. The separate `Security Scan` workflow evaluates the deployed
+   backend when configured. A successful frontend build is not a backend verdict.
+4. Add the exact HTTPS preview origin(s) to the backend secret
+   `ADDITIONAL_ALLOWED_ORIGINS`, comma-separated. Redeploy affected functions,
+   including `workflow-advisor`, `ai-chat`, `contact-form`, `place-order`, and
+   `admin-users`, with their existing authorization settings. Never allow all
+   `*.vercel.app` domains. This source change alone does not update deployed functions.
+5. Add exact preview and production callback URLs to Supabase Auth's redirect
+   configuration. Check sign-in and sign-out without changing the existing Site URL
+   until the production cutover is intended.
+6. Configure GitHub variable `SECURITY_SCAN_URL` and secret `SECURITY_SCAN_TOKEN`
+   to match the backend scan endpoint. See `SECURITY_CI.md`. The existing production
+   scan remains fail-closed when credentials are missing; do not bypass it to release.
+7. Require frontend and backend checks before merging into the production branch.
+   Verify home, direct deep links, assets, day/night persistence, authentication,
+   and authorized admin access. Exercise order creation only with test data.
+8. Release through a reviewed production build after backend checks pass. Verify
+   production before switching DNS. Vercel can restore the previous production
+   deployment; database changes require their own recovery plan.
 
-# Build for production
-npm run build
-```
+The Vercel preview uses the existing Lovable/Supabase backend unless explicitly
+reconfigured. Hosting the frontend on Vercel does not migrate backend functions,
+secrets, authentication settings, or the Lovable AI Gateway dependency.
 
-This generates a `dist/` folder with all static assets (HTML, JS, CSS).
+## Day/night mode
 
-#### 2. Configure for Subfolder Hosting (Optional)
-If deploying to a subfolder (e.g., `/ditechai/` instead of domain root):
+The header and admin controls share a Day/Night button. Day is the initial default;
+the selected mode is saved on the device and restored before paint. An existing
+`system` preference follows device appearance until the visitor explicitly toggles.
+Blocked preference storage does not prevent the control from working for the visit.
 
-**Edit `vite.config.ts`:**
-```typescript
-export default defineConfig(({ mode }) => ({
-  base: '/ditechai/', // Add this line
-  // ... rest of config
-}));
-```
+## Shared hosting alternative
 
-Then rebuild:
-```bash
-npm run build
-```
+Build with the public Supabase variables supplied at build time. Upload only `dist/`
+to the domain root. No Node runtime is required to serve the frontend. Keep the backend
+on Supabase and configure its origins and Auth redirect URLs for the final domain.
+For Apache/cPanel, add this `.htaccess` alongside `index.html`:
 
-#### 3. Upload to cPanel
-
-**Option A: File Manager**
-1. Log into cPanel
-2. Open File Manager
-3. Navigate to `public_html` (or your subfolder, e.g., `public_html/ditechai/`)
-4. Upload all files from `dist/`
-5. Preserve folder structure exactly
-
-**Option B: FTP**
-- Use FTP client (WinSCP, Filezilla, etc.)
-- Connect to your cPanel FTP credentials
-- Upload `dist/` contents to `public_html` or subfolder
-
-#### 4. Create `.htaccess` for SPA Routing
-
-Create `.htaccess` in the same directory as `index.html`:
-
-**For domain root:**
 ```apache
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /
-  
-  # Don't rewrite actual files or directories
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  
-  # Route all requests to index.html (React Router)
-  RewriteRule ^ index.html [QSA,L]
+  RewriteRule ^ index.html [L]
 </IfModule>
 ```
 
-**For subfolder (e.g., `/ditechai/`):**
-```apache
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /ditechai/
-  
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  
-  RewriteRule ^ index.html [QSA,L]
-</IfModule>
-```
+Subfolder hosting also requires matching Vite `base` and React Router `basename`;
+changing only the Vite base does not fix navigation. Prefer a dedicated subdomain.
 
-#### 5. Test Deployment
+## Remaining backend work
 
-✅ Visit your domain → should load the home page
-
-✅ Navigate to `/services`, `/about`, etc. → should work without 404s
-
-✅ Open browser DevTools → check that JS/CSS bundles load (no 404s)
-
----
-
-## Part 2: Environment Variables for cPanel
-
-### Setting Environment Variables in cPanel
-
-Since cPanel is static hosting, environment variables must be injected **before build** or via a **build script**.
-
-#### Option 1: Create `.env.production` before upload
-
-**Locally, create `.env.production`:**
-```
-VITE_SUPABASE_URL=https://your-supabase-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-key-here
-VITE_API_URL=https://api.ditechai.com
-VITE_API_ENV=production
-VITE_ENABLE_CHECKOUT=true
-VITE_STRIPE_PUBLIC_KEY=pk_live_your_stripe_key
-```
-
-Then build:
-```bash
-npm run build
-```
-
-Upload `dist/` as described above.
-
-#### Option 2: Use cPanel Environment or DNS for API endpoints
-
-Hardcode base API URLs in TypeScript config and let DNS/subdomain routing handle it:
-
-**In `src/config/env.ts`:**
-```typescript
-const baseUrl = import.meta.env.VITE_API_URL || 'https://api.ditechai.com';
-```
-
-Update DNS records to point subdomains to your API backend.
-
----
-
-## Part 3: E-commerce & Checkout Integration
-
-### Current State
-The shop displays **curated hardware** with:
-- Product catalog (12 items across 6 categories)
-- Search & filtering
-- **"Enquire" button** → links to Contact page
-
-**No checkout flow exists yet.**
-
-### To Enable Full E-commerce Checkout
-
-#### Step 1: Set Up Supabase Backend
-
-1. **Create a Supabase project** at [supabase.com](https://supabase.com)
-2. **Run the schema** from `src/integrations/supabase/schema.sql`:
-   - Go to Supabase SQL Editor
-   - Paste entire schema
-   - Click "Run"
-3. **Enable RLS** on all tables (already in schema)
-4. **Configure Auth**:
-   - In Supabase Dashboard → Authentication → Providers
-   - Enable Email/Password or OAuth (Google, GitHub, etc.)
-
-#### Step 2: Set Environment Variables
-
-**Update `.env.production` (and local `.env`):**
-```
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-key
-VITE_STRIPE_PUBLIC_KEY=pk_live_your_stripe_key
-VITE_ENABLE_CHECKOUT=true
-```
-
-#### Step 3: Implement Checkout UI Component
-
-Create `src/components/checkout/CheckoutFlow.tsx`:
-
-```typescript
-import { useState } from 'react';
-import { CheckoutStep, CheckoutState } from '@/types/checkout';
-import { useCart } from '@/hooks/useCart';
-
-const CheckoutFlow = () => {
-  const [step, setStep] = useState<CheckoutStep>('cart');
-  const { cart } = useCart();
-
-  switch (step) {
-    case 'cart':
-      return <CartReview onNext={() => setStep('shipping')} />;
-    case 'shipping':
-      return <ShippingForm onNext={() => setStep('payment')} />;
-    case 'payment':
-      return <PaymentForm onNext={() => setStep('confirmation')} />;
-    case 'confirmation':
-      return <OrderConfirmation />;
-  }
-};
-
-export default CheckoutFlow;
-```
-
-#### Step 4: Add Stripe Integration
-
-1. **Get Stripe API Key** from [stripe.com](https://stripe.com)
-2. **Install Stripe React:**
-   ```bash
-   npm install @stripe/react-stripe-js @stripe/js
-   ```
-3. **Create payment form** using `@stripe/react-stripe-js`
-
-#### Step 5: Update Shop Routes
-
-**In `src/App.tsx`, add checkout route:**
-```typescript
-const Checkout = lazy(() => import("./pages/Checkout"));
-
-// In Routes:
-<Route path="/checkout" element={<Checkout />} />
-```
-
-**Update Shop product cards to use checkout:**
-```typescript
-// Before:
-<Link to="/contact">Enquire</Link>
-
-// After:
-<Link to="/checkout">Add to Cart</Link>
-```
-
-#### Step 6: Database Schema for Orders
-
-Schema already includes:
-- `customers` table → users
-- `products` table → inventory
-- `orders` table → order records
-- `order_items` table → order line items
-- `payment_intents` table → Stripe payment tracking
-- `shipping_addresses` table → delivery addresses
-- RLS policies → secure access
-
-#### Step 7: Deploy Backend API (Optional)
-
-For production, you may want a **Node.js/Express backend** to:
-- Create Stripe payment intents securely
-- Send order confirmation emails
-- Manage inventory
-- Handle webhooks
-
-Example backend structure:
-```
-backend/
-  src/
-    routes/
-      orders.ts    # Create orders, list orders
-      payments.ts  # Stripe webhook handling
-      products.ts  # Product inventory
-    middleware/
-      auth.ts      # JWT validation
-      errorHandler.ts
-    config/
-      supabase.ts  # Supabase client
-      stripe.ts    # Stripe client
-```
-
-**Deploy to:**
-- Render.com (free tier)
-- Railway.app
-- AWS Lambda + API Gateway
-- Heroku
-
----
-
-## Checklist: Go Live with E-commerce
-
-- [ ] Create Supabase project and run schema
-- [ ] Set up Stripe account and get API keys
-- [ ] Update `.env.production` with secrets
-- [ ] Build locally: `npm run build`
-- [ ] Test checkout flow locally: `npm run dev`
-- [ ] Upload `dist/` to cPanel
-- [ ] Add `.htaccess` for SPA routing
-- [ ] Test routes on live domain
-- [ ] Test checkout (cart → shipping → payment → confirmation)
-- [ ] Enable SSL/HTTPS (required for Stripe)
-- [ ] Set up Stripe webhooks for order notifications
-- [ ] Configure email service for order confirmations
-- [ ] Monitor Supabase logs for errors
-- [ ] Set up analytics (Sentry, LogRocket)
-
----
-
-## Troubleshooting
-
-### Issue: 404 on routes like `/services`
-**Solution:** Ensure `.htaccess` is in the correct directory and `mod_rewrite` is enabled on cPanel.
-
-### Issue: Supabase connection fails
-**Solution:** Check `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are correct. Verify RLS policies allow anonymous access for reading products.
-
-### Issue: Stripe keys not working
-**Solution:** Ensure you're using **published keys** (not secret keys) in frontend. Secret keys go in backend only.
-
-### Issue: Cart data lost on page refresh
-**Solution:** Verify localStorage is enabled in browser. Check DevTools Application tab.
-
----
-
-## Security Best Practices (2025)
-
-✅ **Environment Variables:**
-- Use `.env` files, never hardcode secrets
-- Use Supabase Vault or AWS Secrets Manager for production secrets
-- Rotate keys every 90 days
-
-✅ **Database (Supabase):**
-- Enable RLS on all tables
-- Write tight access policies (see schema.sql)
-- Never expose raw SQL to frontend
-
-✅ **Payments (Stripe):**
-- Never handle card data on frontend
-- Always use Stripe Elements or Payment Elements
-- Validate amounts server-side
-- Use webhooks for order confirmation (not API responses)
-
-✅ **Frontend:**
-- Sanitize user inputs
-- Use HTTPS only
-- Implement rate limiting on API calls
-- Use Content Security Policy (CSP) headers
-
-✅ **Monitoring:**
-- Set up Sentry for error tracking
-- Monitor Supabase logs
-- Alert on failed payments
-- Track checkout abandonment rate
-
----
-
-## References
-
-- [Vite Deployment Guide](https://vitejs.dev/guide/static-deploy.html)
-- [Supabase Best Practices](https://supabase.com/docs/guides/database/best-practices)
-- [Stripe Payment Intents](https://stripe.com/docs/payments/accept-a-payment)
-- [Apache .htaccess Rewrite Rules](https://httpd.apache.org/docs/current/mod/mod_rewrite.html)
-- [React Router v6](https://reactrouter.com/en/main)
-- [PCI DSS Compliance](https://www.pcisecuritystandards.org/)
+A frontend deployment does not resolve order transactionality or verify database
+RLS. Review those independently before commercial checkout: create order and line
+items atomically, add idempotency, and validate deployed access policies.

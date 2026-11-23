@@ -3,16 +3,7 @@ import { z } from "npm:zod@4.6.7";
 import { buildWorkflowInstructions, WorkflowAdvisorSchema } from "./schema.ts";
 import { addGatewayHeaders, createWorkflowAdvice } from "./responses.ts";
 
-const ALLOWED_ORIGINS = new Set([
-  "https://ditechai.lovable.app",
-  "https://ditech.solutions",
-  "https://www.ditech.solutions",
-  "http://localhost:8080",
-]);
-
-function isAllowedOrigin(origin: string) {
-  return !origin || ALLOWED_ORIGINS.has(origin) || origin.endsWith(".lovable.app");
-}
+import { isAllowedOrigin } from "../_shared/cors.ts";
 
 function corsHeaders(req: Request) {
   const origin = req.headers.get("origin") ?? "";

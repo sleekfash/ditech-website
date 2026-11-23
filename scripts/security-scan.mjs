@@ -17,6 +17,7 @@
  * If SECURITY_SCAN_URL is unset it is derived from VITE_SUPABASE_URL in .env.
  *
  * Flags:
+ *   --static-only       run static checks as a separate CI check (no backend verdict)
  *   --skip-remote       run only the static checks (offline mode)
  *   --update-baseline   rewrite security-baseline.json from current findings
  *                       (preserves existing "reason" texts)
@@ -127,6 +128,10 @@ function deriveScanUrl() {
 }
 
 function resolveScanMode() {
+  if (args.has("--static-only")) {
+    console.log("INFO: Frontend static check only. Backend security is NOT evaluated by this check.");
+    return { runRemote: false };
+  }
   if (explicitSkipRemote) {
     if (isProtectedBranch) {
       console.error("ERROR: --skip-remote is prohibited on protected branches.");
@@ -243,7 +248,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("\nPASSED: no new warn/error findings.");
+  console.log(`\nPASSED: no new warn/error findings in ${mode.runRemote ? "frontend and backend checks" : "frontend static checks only; backend scan not run"}.`);
 }
 
 main().catch((err) => {
